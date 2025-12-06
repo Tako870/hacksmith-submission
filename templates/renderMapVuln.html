@@ -1,0 +1,361 @@
+{% extends 'base.html' %}
+
+{% block title %}Map of Asset Network (Vulnerabilities){% endblock %}
+
+{% block header %}
+<h1>Map of Asset Network: Highlighted Vulnerabilities</h1>
+{% endblock %}
+
+{% block content %}
+
+<p>
+    This page displays the asset network and highlights hosts marked as
+    compromised or at-risk by the log filtering/analysis pipeline.
+</p>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div id="map-container" style="display: flex; gap: 16px; margin-top: 20px; position: relative;">
+    <!-- Graph container -->
+    <div
+        id="network"
+        style="
+            flex: 3;
+            height: 75vh;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            position: relative;
+        "
+    >
+        <!-- network drawing goes here (legend moved outside to avoid being removed) -->
+    </div>
+
+    <!-- Legend overlay (moved out of #network so vis-network won't remove it) -->
+    <div
+        id="legend"
+        style="
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border: 1px solid #bbb;
+            z-index: 9999;
+            pointer-events: auto;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        "
+    >
+        <strong>Edge Legend</strong><br /><br />
+        <div style="font-size:0.85rem;color:#222">(Colored edges show relation types)</div>
+        <hr style="margin:8px 0" />
+        <strong>Vulnerability Legend</strong>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+            <span style="display:inline-block;width:16px;height:12px;background:#ef4444;border:1px solid #111"></span>
+            <span>Critical / Compromised</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+            <span style="display:inline-block;width:16px;height:12px;background:#f59e0b;border:1px solid #111"></span>
+            <span>High</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+            <span style="display:inline-block;width:16px;height:12px;background:#fbbf24;border:1px solid #111"></span>
+            <span>Medium / At Risk</span>
+        </div>
+    </div>
+
+    <!-- Info box -->
+    <div
+        id="node-info"
+        style="
+            flex: 1;
+            height: 75vh;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 0.9rem;
+            overflow-y: auto;
+            background: #f9fafb;
+        "
+    >
+        <h3 style="margin-top: 0">Node Info</h3>
+        <p>Click a node in the graph to pin its details here.</p>
+    </div>
+</div>
+
+<!-- vis-network CDN -->
+<script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+<script>
+    fetch("/api/assetmap")
+        .then((res) => res.json())
+        .then(async (graph) => {
+            const edgeColors = {
+                dmz_exposed: "#ef4444",
+                app_backend: "#3b82f6",
+                db_backend: "#10b981",
+                admin_on: "#f59e0b",
+                local_admin_on: "#6366f1",
+                member_of: "#8b5cf6",
+                interactive_logon: "#14b8a6",
+                data_access: "#f43f5e",
+            };
+
+            const rawNodes = graph.nodes || [];
+            const rawEdges = graph.edges || [];
+
+            const visNodes = rawNodes.map((n) => {
+                let color = "#bdbdbd";
+                let shape = "dot";
+                let size = 18;
+                if (n.type === "user") {
+                    color = "#9e9e9e";
+                    shape = "diamond";
+                    size = 16;
+                } else if (n.type === "group") {
+                    color = "#8b8b8b";
+                    shape = "hexagon";
+                    size = 20;
+                }
+
+                let label = n.name || n.id;
+                if (n.type === "host" && n.ip) label += "\n" + n.ip;
+                if (n.type === "user" && n.sam_account_name) label += "\n(" + n.sam_account_name + ")";
+
+                return {
+                    id: n.id,
+                    label,
+                    color: { background: color, border: "#111" },
+                    shape,
+                    size,
+                    font: { color: "#111", size: 12, multi: true },
+                    raw: n,
+                };
+            });
+
+            const visEdges = rawEdges.map((e, idx) => ({
+                id: "e-" + idx,
+                from: e.source,
+                to: e.target,
+                arrows: "to",
+                color: {
+                    color: edgeColors[e.relation] || "#999",
+                    highlight: edgeColors[e.relation] || "#999",
+                    inherit: false,
+                },
+                width: 2,
+                smooth: { type: "dynamic" },
+            }));
+
+            const container = document.getElementById("network");
+            const data = {
+                nodes: new vis.DataSet(visNodes),
+                edges: new vis.DataSet(visEdges),
+            };
+
+            const options = {
+                interaction: { hover: true, navigationButtons: true, keyboard: true },
+                physics: { stabilization: true, barnesHut: { gravitationalConstant: -3000, springLength: 150 } },
+            };
+
+            const network = new vis.Network(container, data, options);
+
+            const infoBox = document.getElementById("node-info");
+
+            function renderInfo(node) {
+                if (!node) {
+                    infoBox.innerHTML = `<h3>Node Info</h3><p>Click a node in the graph to pin its details here.</p>`;
+                    return;
+                }
+
+                const n = node.raw;
+                const type = n.type || "unknown";
+                const name = n.name || node.id;
+                const ipOrAcct = n.ip || n.sam_account_name || "N/A";
+
+                                infoBox.innerHTML = `
+                <h3>Node Info</h3>
+                <ul>
+                    <li><strong>Type:</strong> ${type}</li>
+                    <li><strong>Name:</strong> ${name}</li>
+                    <li><strong>IP / Account:</strong> ${ipOrAcct}</li>
+                    <li><strong>Zone / Department:</strong> ${n.zone || n.department || "N/A"}</li>
+                    <li><strong>Criticality:</strong> ${n.criticality || "N/A"}</li>
+                </ul>
+            `;
+
+                                // If vulnerability info exists, append it below
+                                if (n && n.vuln) {
+                                        const v = n.vuln;
+                                        let evidenceHtml = '';
+                                        if (v.evidence) {
+                                                // evidence can be a string or array
+                                                if (Array.isArray(v.evidence)) {
+                                                        evidenceHtml = '<ul>' + v.evidence.map(e => `<li><pre style="white-space:pre-wrap;margin:0">${escapeHtml(JSON.stringify(e, null, 2))}</pre></li>`).join('') + '</ul>';
+                                                } else if (typeof v.evidence === 'string') {
+                                                        evidenceHtml = `<pre style="white-space:pre-wrap;">${escapeHtml(v.evidence)}</pre>`;
+                                                } else {
+                                                        evidenceHtml = `<pre style="white-space:pre-wrap;">${escapeHtml(JSON.stringify(v.evidence, null, 2))}</pre>`;
+                                                }
+                                        }
+
+                                        const vulnHtml = `
+                    <hr/>
+                    <h4>Vulnerability</h4>
+                    <ul>
+                        <li><strong>Risk:</strong> ${escapeHtml(v.risk_level || v.status || 'unknown')}</li>
+                        <li><strong>Reason:</strong> ${escapeHtml(v.reason || v.summary || '')}</li>
+                        <li><strong>Tags:</strong> ${escapeHtml((v.tags || []).join(', '))}</li>
+                    </ul>
+                    <div><strong>Evidence:</strong>${evidenceHtml}</div>
+                `;
+
+                                        infoBox.innerHTML += vulnHtml;
+                                }
+            }
+
+                        // Small helper to escape HTML
+                        function escapeHtml(str) {
+                                if (str === null || str === undefined) return '';
+                                return String(str)
+                                        .replace(/&/g, '&amp;')
+                                        .replace(/</g, '&lt;')
+                                        .replace(/>/g, '&gt;')
+                                        .replace(/"/g, '&quot;')
+                                        .replace(/'/g, '&#39;');
+                        }
+
+            // After graph is constructed, request AI-filtered logs and highlight nodes
+            async function applyVulnerabilities() {
+                try {
+                    const resp = await fetch('/api/logs');
+                    if (!resp.ok) return; // silent fail
+                    const logs = await resp.json();
+
+                    // Expect logs.affected_hosts = [{ ip, hostname, status, risk_level, reason, evidence }, ...]
+                    const affected = logs.affected_hosts || logs.affected || [];
+
+                    // Build quick lookup from node raw.ip and raw.name -> node id
+                    const ipToNode = {};
+                    const nameToNode = {};
+                    visNodes.forEach((n) => {
+                        const r = n.raw || {};
+                        if (r.ip) ipToNode[String(r.ip).trim()] = n.id;
+                        if (r.name) nameToNode[String(r.name).toLowerCase().trim()] = n.id;
+                    });
+
+                    // Prepare updates
+                    const updates = [];
+                    affected.forEach((ah) => {
+                        const ip = ah.ip && String(ah.ip).trim();
+                        const host = ah.hostname && String(ah.hostname).toLowerCase().trim();
+                        let nid = null;
+                        if (ip && ipToNode[ip]) nid = ipToNode[ip];
+                        else if (host && nameToNode[host]) nid = nameToNode[host];
+
+                        if (!nid) return; // no matching node
+
+                        // Determine color by status/risk
+                        // Critical / Compromised = Red (#ef4444)
+                        // High = Orange (#f59e0b)
+                        // Medium / At Risk = Amber (#fbbf24)
+                        // Others = Orange-Red (#f97316)
+                        const risk = (ah.risk_level || ah.status || '').toString().toLowerCase();
+                        let bg = '#f97316'; // default
+                        if (risk.includes('critical') || risk.includes('compromised')) {
+                            bg = '#ef4444'; // red
+                        } else if (risk.includes('high')) {
+                            bg = '#f59e0b'; // orange
+                        } else if (risk.includes('medium') || risk.includes('at risk') || risk.includes('warning')) {
+                            bg = '#fbbf24'; // amber
+                        }
+
+                        // Store evidence on the node raw for later display
+                        const node = visNodes.find((x) => x.id === nid);
+                        if (node) {
+                            node.raw = node.raw || {};
+                            node.raw.vuln = ah;
+                        }
+
+                        updates.push({ id: nid, color: { background: bg, border: '#111' } });
+                    });
+
+                    if (updates.length > 0) {
+                        data.nodes.update(updates);
+                    }
+                } catch (e) {
+                    console.warn('Failed to fetch /api/logs', e);
+                }
+            }
+
+            // Ensure the legend stays above the vis-network canvas. vis-network may
+            // insert canvases asynchronously, so use a MutationObserver to re-assert
+            // styles whenever children change.
+            (function keepLegendOnTop() {
+                const legendEl = document.getElementById('legend');
+                if (!legendEl) return;
+
+                // Style the legend explicitly
+                legendEl.style.zIndex = 9999;
+                legendEl.style.position = legendEl.style.position || 'absolute';
+                legendEl.style.pointerEvents = 'auto';
+
+                function lowerCanvases(parent) {
+                    try {
+                        const canvases = parent.querySelectorAll('canvas, svg');
+                        canvases.forEach((c) => {
+                            // make sure canvases are behind the legend
+                            c.style.zIndex = 1;
+                            if (!c.style.position) c.style.position = 'relative';
+                        });
+                    } catch (e) {
+                        console.warn('Failed to lower canvases', e);
+                    }
+                }
+
+                // initial pass
+                lowerCanvases(container);
+
+                // observe for future canvas/svg insertions
+                try {
+                    const mo = new MutationObserver((mutations) => {
+                        for (const m of mutations) {
+                            if (m.addedNodes && m.addedNodes.length) {
+                                lowerCanvases(container);
+                            }
+                        }
+                    });
+                    mo.observe(container, { childList: true, subtree: true });
+                } catch (e) {
+                    // MutationObserver might not be available in some older browsers;
+                    // fallback to a short interval re-check
+                    const iv = setInterval(() => lowerCanvases(container), 500);
+                    // stop after 10 seconds
+                    setTimeout(() => clearInterval(iv), 10000);
+                }
+            })();
+
+            network.on("click", (params) => {
+                if (params.nodes.length > 0) {
+                    const nodeId = params.nodes[0];
+                    const node = visNodes.find((n) => n.id === nodeId);
+                    renderInfo(node);
+                }
+            });
+
+            // Kick off vulnerability application (fire-and-forget)
+            applyVulnerabilities();
+        });
+</script>
+
+{% endblock %}

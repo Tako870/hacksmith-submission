@@ -7,8 +7,43 @@ from datetime import datetime
 from qwenAPI2 import analyze_sysmon_logs
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SecretKey")
-HF_Key = os.getenv("HF_Key")
+
+# Load environment variables from a local .env file if present.
+# Prefer python-dotenv when available, fall back to a simple parser.
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    env_path = Path('.env')
+    if env_path.exists():
+        try:
+            with env_path.open('r', encoding='utf-8') as fh:
+                for raw in fh:
+                    line = raw.strip()
+                    if not line or line.startswith('#'):
+                        continue
+                    if '=' in line:
+                        k, v = line.split('=', 1)
+                        k = k.strip()
+                        v = v.strip().strip('"').strip("'")
+                        os.environ.setdefault(k, v)
+        except Exception:
+            # If manual .env parsing fails, continue — we'll fall back below.
+            pass
+
+# Secret key for session/csrf. Prefer an explicit SecretKey in env/.env.
+_secret = os.getenv('SecretKey')
+if not _secret:
+    # Generate a temporary key for local development to avoid crashes during demo.
+    # Warning: ephemeral key means sessions will not persist across restarts.
+    import sys
+    print('Warning: SecretKey not set in environment or .env; using ephemeral key for dev.', file=sys.stderr)
+    _secret = os.urandom(24)
+
+app.secret_key = _secret
+
+# HF API key
+HF_Key = os.getenv('HF_Key')
 
 # Path to your asset map JSON file
 # Use the JSON structure I sent earlier as asset_map_with_identities.json
@@ -341,8 +376,10 @@ def upload_all():
         asset_map = load_asset_map()
         enriched_events = [resolve_assets(e, asset_map) for e in canonical_events]
 
-        # Render results page
-        return render_template('uploadResults.html', events=enriched_events, count=len(enriched_events))
+        # After upload, redirect to the vulnerable map view which will trigger
+        # the HF analysis endpoint and highlight compromised/at-risk hosts.
+        flash(f"Uploaded and parsed {len(enriched_events)} events.", "success")
+        return redirect(url_for('render_map_vuln'))
 
     except Exception as e:
         flash(f"Error processing log file: {str(e)}", "error")
@@ -403,6 +440,33 @@ def render_map():
         host_nodes=host_nodes,
         user_nodes=user_nodes,
         group_nodes=group_nodes
+    )
+
+
+@app.route('/rendermap_vuln')
+def render_map_vuln():
+    """
+    Render the map page that includes vulnerability highlighting.
+    This view will call /api/logs from the client to trigger HF analysis
+    and fetch filtered results to highlight nodes.
+    """
+    graph = load_asset_map()
+    nodes = graph.get("nodes", [])
+    edges = graph.get("edges", [])
+    metadata = graph.get("metadata", {})
+
+    host_nodes = [n for n in nodes if n.get("type") == "host"]
+    user_nodes = [n for n in nodes if n.get("type") == "user"]
+    group_nodes = [n for n in nodes if n.get("type") == "group"]
+
+    return render_template(
+        'renderMapVuln.html',
+        metadata=metadata,
+        nodes=nodes,
+        edges=edges,
+        host_nodes=host_nodes,
+        user_nodes=user_nodes,
+        group_nodes=group_nodes,
     )
 
 @app.route('/api/assetmap')

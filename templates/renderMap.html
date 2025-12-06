@@ -1,12 +1,28 @@
-{% extends 'base.html' %} {% block title %}Map of Asset Network{% endblock %} {%
-block header %}
+{% extends 'base.html' %}
+
+{% block title %}Map of Asset Network{% endblock %}
+
+{% block header %}
 <h1>Map of Asset Network</h1>
-{% endblock %} {% block content %}
+{% endblock %}
+
+{% block content %}
 
 <p>
-	This page will display a visual representation of the asset network based on
-	the uploaded JSON map.
+	This page will display a visual representation of the asset network based
+	on the uploaded JSON map. Vulnerabilities won't be highlighted on this base view.
 </p>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+	{% for category, message in messages %}
+	  <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+		{{ message }}
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	  </div>
+	{% endfor %}
+  {% endif %}
+{% endwith %}
 
 <div id="map-container" style="display: flex; gap: 16px; margin-top: 20px">
 	<!-- Graph container -->
@@ -35,107 +51,7 @@ block header %}
 			"
 		>
 			<strong>Edge Legend</strong><br /><br />
-
-			<div>
-				<span
-					style="
-						display: inline-block;
-						width: 14px;
-						height: 4px;
-						background: #ef4444;
-						margin-right: 6px;
-					"
-				></span
-				>dmz_exposed
-			</div>
-			<div>
-				<span
-					style="
-						display: inline-block;
-						width: 14px;
-						height: 4px;
-						background: #3b82f6;
-						margin-right: 6px;
-					"
-				></span
-				>app_backend
-			</div>
-			<div>
-				<span
-					style="
-						display: inline-block;
-						width: 14px;
-						height: 4px;
-						background: #10b981;
-						margin-right: 6px;
-					"
-				></span
-				>db_backend
-			</div>
-			<div>
-				<span
-					style="
-						display: inline-block;
-						width: 14px;
-						height: 4px;
-						background: #f59e0b;
-						margin-right: 6px;
-					"
-				></span
-				>admin_on
-			</div>
-			<div>
-				<span
-					style="
-						display: inline-block;
-						width: 14px;
-						height: 4px;
-						background: #6366f1;
-						margin-right: 6px;
-					"
-				></span
-				>local_admin_on
-			</div>
-			<div>
-				<span
-					style="
-						display: inline-block;
-						width: 14px;
-						height: 4px;
-						background: #8b5cf6;
-						margin-right: 6px;
-					"
-				></span
-				>member_of
-			</div>
-			<div>
-				<span
-					style="
-						display: inline-block;
-						width: 14px;
-						height: 4px;
-						background: #14b8a6;
-						margin-right: 6px;
-					"
-				></span
-				>interactive_logon
-			</div>
-			<div>
-				<span
-					style="
-						display: inline-block;
-						width: 14px;
-						height: 4px;
-						background: #f43f5e;
-						margin-right: 6px;
-					"
-				></span
-				>data_access
-			</div>
-
-			<div style="margin-top: 6px; font-size: 0.7rem; color: #444">
-				(Graph draws colored edges without labels)
-			</div>
+			<div style="font-size:0.85rem;color:#222">(Colored edges show relation types)</div>
 		</div>
 	</div>
 
@@ -155,15 +71,6 @@ block header %}
 	>
 		<h3 style="margin-top: 0">Node Info</h3>
 		<p>Click a node in the graph to pin its details here.</p>
-		<ul>
-			<li><strong>Type:</strong> –</li>
-			<li><strong>Name:</strong> –</li>
-			<li><strong>IP / Account:</strong> –</li>
-			<li><strong>Zone / Department:</strong> –</li>
-			<li><strong>Criticality:</strong> –</li>
-			<li><strong>Dummy Owner:</strong> –</li>
-			<li><strong>Dummy Risk:</strong> –</li>
-		</ul>
 	</div>
 </div>
 
@@ -189,39 +96,37 @@ block header %}
 			const rawNodes = graph.nodes || [];
 			const rawEdges = graph.edges || [];
 
-			// ===== Build nodes =====
 			const visNodes = rawNodes.map((n) => {
-				let color = "#60a5fa";
+				// Default monotone color
+				let color = "#bdbdbd";
 				let shape = "dot";
 				let size = 18;
 
 				if (n.type === "user") {
-					color = "#f59e0b";
+					color = "#9e9e9e";
 					shape = "diamond";
 					size = 16;
 				} else if (n.type === "group") {
-					color = "#10b981";
+					color = "#8b8b8b";
 					shape = "hexagon";
 					size = 20;
 				}
 
 				let label = n.name || n.id;
-				if (n.type === "host" && n.ip) label += "\\n" + n.ip;
-				if (n.type === "user" && n.sam_account_name)
-					label += "\\n(" + n.sam_account_name + ")";
+				if (n.type === "host" && n.ip) label += "\n" + n.ip;
+				if (n.type === "user" && n.sam_account_name) label += "\n(" + n.sam_account_name + ")";
 
 				return {
 					id: n.id,
 					label,
-					color: { background: color, border: "#222" },
+					color: { background: color, border: "#111" },
 					shape,
 					size,
-					font: { color: "#333", size: 12, multi: true },
+					font: { color: "#111", size: 12, multi: true },
 					raw: n,
 				};
 			});
 
-			// ===== Build edges (NO LABELS, ONLY COLORED) =====
 			const visEdges = rawEdges.map((e, idx) => ({
 				id: "e-" + idx,
 				from: e.source,
@@ -243,41 +148,17 @@ block header %}
 			};
 
 			const options = {
-				interaction: {
-					hover: true,
-					navigationButtons: true,
-					keyboard: true,
-				},
-				physics: {
-					stabilization: true,
-					barnesHut: {
-						gravitationalConstant: -3000,
-						springLength: 150,
-					},
-				},
+				interaction: { hover: true, navigationButtons: true, keyboard: true },
+				physics: { stabilization: true, barnesHut: { gravitationalConstant: -3000, springLength: 150 } },
 			};
 
 			const network = new vis.Network(container, data, options);
 
-			// ===== Node info box =====
 			const infoBox = document.getElementById("node-info");
-			let selectedNodeId = null;
 
 			function renderInfo(node) {
 				if (!node) {
-					infoBox.innerHTML = `
-          <h3>Node Info</h3>
-          <p>Click a node in the graph to pin its details here.</p>
-          <ul>
-            <li><strong>Type:</strong> –</li>
-            <li><strong>Name:</strong> –</li>
-            <li><strong>IP / Account:</strong> –</li>
-            <li><strong>Zone / Department:</strong> –</li>
-            <li><strong>Criticality:</strong> –</li>
-            <li><strong>Dummy Owner:</strong> –</li>
-            <li><strong>Dummy Risk:</strong> –</li>
-          </ul>
-        `;
+					infoBox.innerHTML = `<h3>Node Info</h3><p>Click a node in the graph to pin its details here.</p>`;
 					return;
 				}
 
@@ -287,27 +168,21 @@ block header %}
 				const ipOrAcct = n.ip || n.sam_account_name || "N/A";
 
 				infoBox.innerHTML = `
-        <h3>Node Info</h3>
-        <ul>
-          <li><strong>Type:</strong> ${type}</li>
-          <li><strong>Name:</strong> ${name}</li>
-          <li><strong>IP / Account:</strong> ${ipOrAcct}</li>
-          <li><strong>Zone / Department:</strong> ${
-				n.zone || n.department || "N/A"
-			}</li>
-          <li><strong>Criticality:</strong> ${n.criticality || "N/A"}</li>
-          <li><strong>Dummy Owner:</strong> Infra Team Alpha</li>
-          <li><strong>Dummy Risk:</strong> Modelled risk placeholder</li>
-        </ul>
-      `;
+		<h3>Node Info</h3>
+		<ul>
+		  <li><strong>Type:</strong> ${type}</li>
+		  <li><strong>Name:</strong> ${name}</li>
+		  <li><strong>IP / Account:</strong> ${ipOrAcct}</li>
+		  <li><strong>Zone / Department:</strong> ${n.zone || n.department || "N/A"}</li>
+		  <li><strong>Criticality:</strong> ${n.criticality || "N/A"}</li>
+		</ul>
+	  `;
 			}
 
-			// ===== CLICK selects node =====
 			network.on("click", (params) => {
 				if (params.nodes.length > 0) {
 					const nodeId = params.nodes[0];
 					const node = visNodes.find((n) => n.id === nodeId);
-					selectedNodeId = nodeId;
 					renderInfo(node);
 				}
 			});
@@ -315,3 +190,4 @@ block header %}
 </script>
 
 {% endblock %}
+
