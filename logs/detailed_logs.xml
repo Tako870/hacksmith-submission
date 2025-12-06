@@ -1,0 +1,315 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Events xmlns:ns0="http://schemas.microsoft.com/win/2004/08/events/event">
+  <ns0:Event>
+    <ns0:System>
+      <ns0:Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <ns0:EventID>1</ns0:EventID>
+      <ns0:Version>5</ns0:Version>
+      <ns0:Level>4</ns0:Level>
+      <ns0:Task>1</ns0:Task>
+      <ns0:Opcode>0</ns0:Opcode>
+      <ns0:Keywords>0x8000000000000000</ns0:Keywords>
+      <ns0:TimeCreated SystemTime="2025-01-15T14:22:30.1234567Z" />
+      <ns0:EventRecordID>8120</ns0:EventRecordID>
+      <ns0:Correlation />
+      <ns0:Execution ProcessID="2020" ThreadID="2088" />
+      <ns0:Channel>Microsoft-Windows-Sysmon/Operational</ns0:Channel>
+      <ns0:Computer>ws-eng-1</ns0:Computer>
+      <ns0:Security UserID="S-1-5-21-1234567890-1234567890-1234567890-1001" />
+    </ns0:System>
+    <ns0:EventData>
+      <ns0:Data Name="RuleName" />
+      <ns0:Data Name="UtcTime">2025-01-15 14:22:30.123</ns0:Data>
+      <ns0:Data Name="ProcessGuid">{365abb72-3ede-5d0b-0000-001032961a00}</ns0:Data>
+      <ns0:Data Name="ProcessId">3820</ns0:Data>
+      <ns0:Data Name="Image">C:\Windows\System32\systeminfo.exe</ns0:Data>
+      <ns0:Data Name="FileVersion">10.0.19041.1 (win10_21h2)</ns0:Data>
+      <ns0:Data Name="Description">Displays system information</ns0:Data>
+      <ns0:Data Name="Product">Microsoft® Windows® Operating System</ns0:Data>
+      <ns0:Data Name="Company">Microsoft Corporation</ns0:Data>
+      <ns0:Data Name="CommandLine">systeminfo</ns0:Data>
+      <ns0:Data Name="CurrentDirectory">c:\ProgramData\</ns0:Data>
+      <ns0:Data Name="User">CORP\alice</ns0:Data>
+      <ns0:Data Name="LogonGuid">{365abb72-3991-5d0b-0000-002029350100}</ns0:Data>
+      <ns0:Data Name="LogonId">0x13529</ns0:Data>
+      <ns0:Data Name="TerminalSessionId">1</ns0:Data>
+      <ns0:Data Name="IntegrityLevel">High</ns0:Data>
+      <ns0:Data Name="Hashes">SHA1=5A3D9211F06A9D4B4DE16AB40E02EC2D5F8C258E,MD5=258B2ED54FC7F74E2FDCCE5861549C1A</ns0:Data>
+      <ns0:Data Name="ParentProcessGuid">{365abb72-3ed4-5d0b-0000-0010b2871a00}</ns0:Data>
+      <ns0:Data Name="ParentProcessId">1440</ns0:Data>
+      <ns0:Data Name="ParentImage">C:\Windows\System32\cmd.exe</ns0:Data>
+      <ns0:Data Name="ParentCommandLine">"cmd"</ns0:Data>
+    </ns0:EventData>
+  </ns0:Event>
+
+  <ns0:Event>
+    <ns0:System>
+      <ns0:Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <ns0:EventID>1</ns0:EventID>
+      <ns0:Version>5</ns0:Version>
+      <ns0:Level>4</ns0:Level>
+      <ns0:Task>1</ns0:Task>
+      <ns0:Opcode>0</ns0:Opcode>
+      <ns0:Keywords>0x8000000000000000</ns0:Keywords>
+      <ns0:TimeCreated SystemTime="2025-01-15T14:22:18.9568108Z" />
+      <ns0:EventRecordID>8119</ns0:EventRecordID>
+      <ns0:Correlation />
+      <ns0:Execution ProcessID="2020" ThreadID="2088" />
+      <ns0:Channel>Microsoft-Windows-Sysmon/Operational</ns0:Channel>
+      <ns0:Computer>ws-eng-1</ns0:Computer>
+      <ns0:Security UserID="S-1-5-21-1234567890-1234567890-1234567890-1001" />
+    </ns0:System>
+    <ns0:EventData>
+      <ns0:Data Name="RuleName" />
+      <ns0:Data Name="UtcTime">2025-01-15 14:22:18.956</ns0:Data>
+      <ns0:Data Name="ProcessGuid">{365abb72-3ed8-5d0b-0000-0010398f1a00}</ns0:Data>
+      <ns0:Data Name="ProcessId">1476</ns0:Data>
+      <ns0:Data Name="Image">C:\Windows\System32\whoami.exe</ns0:Data>
+      <ns0:Data Name="FileVersion">10.0.19041.1 (win10_21h2)</ns0:Data>
+      <ns0:Data Name="Description">whoami - displays logged on user information</ns0:Data>
+      <ns0:Data Name="Product">Microsoft® Windows® Operating System</ns0:Data>
+      <ns0:Data Name="Company">Microsoft Corporation</ns0:Data>
+      <ns0:Data Name="CommandLine">whoami</ns0:Data>
+      <ns0:Data Name="CurrentDirectory">c:\ProgramData\</ns0:Data>
+      <ns0:Data Name="User">CORP\alice</ns0:Data>
+      <ns0:Data Name="LogonGuid">{365abb72-3991-5d0b-0000-002029350100}</ns0:Data>
+      <ns0:Data Name="LogonId">0x13529</ns0:Data>
+      <ns0:Data Name="TerminalSessionId">1</ns0:Data>
+      <ns0:Data Name="IntegrityLevel">High</ns0:Data>
+      <ns0:Data Name="Hashes">SHA1=DC058F52AD8ACBD316827B6DCAC2434AB3CC515C,MD5=0EBF71E33EF09CA65D9683AFA999C473</ns0:Data>
+      <ns0:Data Name="ParentProcessGuid">{365abb72-3ed4-5d0b-0000-0010b2871a00}</ns0:Data>
+      <ns0:Data Name="ParentProcessId">1440</ns0:Data>
+      <ns0:Data Name="ParentImage">C:\Windows\System32\cmd.exe</ns0:Data>
+      <ns0:Data Name="ParentCommandLine">"cmd"</ns0:Data>
+    </ns0:EventData>
+  </ns0:Event>
+
+  <ns0:Event>
+    <ns0:System>
+      <ns0:Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <ns0:EventID>3</ns0:EventID>
+      <ns0:Version>5</ns0:Version>
+      <ns0:Level>4</ns0:Level>
+      <ns0:Task>3</ns0:Task>
+      <ns0:Opcode>0</ns0:Opcode>
+      <ns0:Keywords>0x8000000000000000</ns0:Keywords>
+      <ns0:TimeCreated SystemTime="2025-01-15T14:22:16.3786858Z" />
+      <ns0:EventRecordID>8118</ns0:EventRecordID>
+      <ns0:Correlation />
+      <ns0:Execution ProcessID="2020" ThreadID="2092" />
+      <ns0:Channel>Microsoft-Windows-Sysmon/Operational</ns0:Channel>
+      <ns0:Computer>ws-eng-1</ns0:Computer>
+      <ns0:Security UserID="S-1-5-18" />
+    </ns0:System>
+    <ns0:EventData>
+      <ns0:Data Name="RuleName" />
+      <ns0:Data Name="UtcTime">2025-01-15 14:22:14.721</ns0:Data>
+      <ns0:Data Name="ProcessGuid">{365abb72-3d05-5d0b-0000-001004220d00}</ns0:Data>
+      <ns0:Data Name="ProcessId">816</ns0:Data>
+      <ns0:Data Name="Image">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</ns0:Data>
+      <ns0:Data Name="User">CORP\alice</ns0:Data>
+      <ns0:Data Name="Protocol">tcp</ns0:Data>
+      <ns0:Data Name="Initiated">false</ns0:Data>
+      <ns0:Data Name="SourceIsIpv6">false</ns0:Data>
+      <ns0:Data Name="SourceIp">172.16.34.21</ns0:Data>
+      <ns0:Data Name="SourceHostname">ws-eng-1</ns0:Data>
+      <ns0:Data Name="SourcePort">52341</ns0:Data>
+      <ns0:Data Name="SourcePortName" />
+      <ns0:Data Name="DestinationIsIpv6">false</ns0:Data>
+      <ns0:Data Name="DestinationIp">172.16.34.6</ns0:Data>
+      <ns0:Data Name="DestinationHostname">db-1</ns0:Data>
+      <ns0:Data Name="DestinationPort">1433</ns0:Data>
+      <ns0:Data Name="DestinationPortName">mssql</ns0:Data>
+    <Data Name="SourceAssetId">ws-eng-1</Data><Data Name="SourceAssetName">Engineer Workstation</Data><Data Name="SourceAssetZone">User</Data><Data Name="SourceAssetCriticality">medium</Data><Data Name="DestinationAssetId">db-1</Data><Data Name="DestinationAssetName">Customer DB Server</Data><Data Name="DestinationAssetZone">Server</Data><Data Name="DestinationAssetCriticality">critical</Data></ns0:EventData>
+  </ns0:Event>
+
+  <ns0:Event>
+    <ns0:System>
+      <ns0:Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <ns0:EventID>10</ns0:EventID>
+      <ns0:Version>3</ns0:Version>
+      <ns0:Level>4</ns0:Level>
+      <ns0:Task>10</ns0:Task>
+      <ns0:Opcode>0</ns0:Opcode>
+      <ns0:Keywords>0x8000000000000000</ns0:Keywords>
+      <ns0:TimeCreated SystemTime="2025-01-15T14:22:14.9255608Z" />
+      <ns0:EventRecordID>8117</ns0:EventRecordID>
+      <ns0:Correlation />
+      <ns0:Execution ProcessID="2020" ThreadID="2088" />
+      <ns0:Channel>Microsoft-Windows-Sysmon/Operational</ns0:Channel>
+      <ns0:Computer>ws-eng-1</ns0:Computer>
+      <ns0:Security UserID="S-1-5-18" />
+    </ns0:System>
+    <ns0:EventData>
+      <ns0:Data Name="RuleName">Suspicious Process Access</ns0:Data>
+      <ns0:Data Name="UtcTime">2025-01-15 14:22:14.909</ns0:Data>
+      <ns0:Data Name="SourceProcessGUID">{365abb72-3d05-5d0b-0000-001004220d00}</ns0:Data>
+      <ns0:Data Name="SourceProcessId">816</ns0:Data>
+      <ns0:Data Name="SourceThreadId">2000</ns0:Data>
+      <ns0:Data Name="SourceImage">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</ns0:Data>
+      <ns0:Data Name="TargetProcessGUID">{365abb72-3ed4-5d0b-0000-0010b2871a00}</ns0:Data>
+      <ns0:Data Name="TargetProcessId">1440</ns0:Data>
+      <ns0:Data Name="TargetImage">C:\Windows\system32\cmd.exe</ns0:Data>
+      <ns0:Data Name="GrantedAccess">0x1fffff</ns0:Data>
+      <ns0:Data Name="CallTrace">C:\Windows\SYSTEM32\ntdll.dll+4530c|C:\Windows\system32\kernel32.dll+51133</ns0:Data>
+    </ns0:EventData>
+  </ns0:Event>
+
+  <ns0:Event>
+    <ns0:System>
+      <ns0:Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <ns0:EventID>1</ns0:EventID>
+      <ns0:Version>5</ns0:Version>
+      <ns0:Level>4</ns0:Level>
+      <ns0:Task>1</ns0:Task>
+      <ns0:Opcode>0</ns0:Opcode>
+      <ns0:Keywords>0x8000000000000000</ns0:Keywords>
+      <ns0:TimeCreated SystemTime="2025-01-15T14:22:14.9255608Z" />
+      <ns0:EventRecordID>8116</ns0:EventRecordID>
+      <ns0:Correlation />
+      <ns0:Execution ProcessID="2020" ThreadID="2088" />
+      <ns0:Channel>Microsoft-Windows-Sysmon/Operational</ns0:Channel>
+      <ns0:Computer>ws-eng-1</ns0:Computer>
+      <ns0:Security UserID="S-1-5-18" />
+    </ns0:System>
+    <ns0:EventData>
+      <ns0:Data Name="RuleName" />
+      <ns0:Data Name="UtcTime">2025-01-15 14:22:14.909</ns0:Data>
+      <ns0:Data Name="ProcessGuid">{365abb72-3ed4-5d0b-0000-0010b2871a00}</ns0:Data>
+      <ns0:Data Name="ProcessId">1440</ns0:Data>
+      <ns0:Data Name="Image">C:\Windows\System32\cmd.exe</ns0:Data>
+      <ns0:Data Name="FileVersion">10.0.19041.1 (win10_21h2)</ns0:Data>
+      <ns0:Data Name="Description">Windows Command Processor</ns0:Data>
+      <ns0:Data Name="Product">Microsoft® Windows® Operating System</ns0:Data>
+      <ns0:Data Name="Company">Microsoft Corporation</ns0:Data>
+      <ns0:Data Name="CommandLine">"cmd"</ns0:Data>
+      <ns0:Data Name="CurrentDirectory">c:\ProgramData\</ns0:Data>
+      <ns0:Data Name="User">CORP\alice</ns0:Data>
+      <ns0:Data Name="LogonGuid">{365abb72-3991-5d0b-0000-002029350100}</ns0:Data>
+      <ns0:Data Name="LogonId">0x13529</ns0:Data>
+      <ns0:Data Name="TerminalSessionId">1</ns0:Data>
+      <ns0:Data Name="IntegrityLevel">High</ns0:Data>
+      <ns0:Data Name="Hashes">SHA1=EE8CBF12D87C4D388F09B4F69BED2E91682920B5,MD5=AD7B9C14083B52BC532FBA5948342B98</ns0:Data>
+      <ns0:Data Name="ParentProcessGuid">{365abb72-3d05-5d0b-0000-001004220d00}</ns0:Data>
+      <ns0:Data Name="ParentProcessId">816</ns0:Data>
+      <ns0:Data Name="ParentImage">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</ns0:Data>
+      <ns0:Data Name="ParentCommandLine">powershell</ns0:Data>
+    </ns0:EventData>
+  </ns0:Event>
+
+  <ns0:Event>
+    <ns0:System>
+      <ns0:Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <ns0:EventID>10</ns0:EventID>
+      <ns0:Version>3</ns0:Version>
+      <ns0:Level>4</ns0:Level>
+      <ns0:Task>10</ns0:Task>
+      <ns0:Opcode>0</ns0:Opcode>
+      <ns0:Keywords>0x8000000000000000</ns0:Keywords>
+      <ns0:TimeCreated SystemTime="2025-01-15T14:22:14.9099358Z" />
+      <ns0:EventRecordID>8115</ns0:EventRecordID>
+      <ns0:Correlation />
+      <ns0:Execution ProcessID="2020" ThreadID="2088" />
+      <ns0:Channel>Microsoft-Windows-Sysmon/Operational</ns0:Channel>
+      <ns0:Computer>ws-eng-1</ns0:Computer>
+      <ns0:Security UserID="S-1-5-18" />
+    </ns0:System>
+    <ns0:EventData>
+      <ns0:Data Name="RuleName">Suspicious Process Access 2</ns0:Data>
+      <ns0:Data Name="UtcTime">2025-01-15 14:22:14.894</ns0:Data>
+      <ns0:Data Name="SourceProcessGUID">{365abb72-3d05-5d0b-0000-001004220d00}</ns0:Data>
+      <ns0:Data Name="SourceProcessId">816</ns0:Data>
+      <ns0:Data Name="SourceThreadId">2000</ns0:Data>
+      <ns0:Data Name="SourceImage">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</ns0:Data>
+      <ns0:Data Name="TargetProcessGUID">{365abb72-3ed4-5d0b-0000-00106c871a00}</ns0:Data>
+      <ns0:Data Name="TargetProcessId">888</ns0:Data>
+      <ns0:Data Name="TargetImage">C:\Windows\system32\cmd.exe</ns0:Data>
+      <ns0:Data Name="GrantedAccess">0x1fffff</ns0:Data>
+      <ns0:Data Name="CallTrace">C:\Windows\SYSTEM32\ntdll.dll+4530c|C:\Windows\system32\kernel32.dll+51133</ns0:Data>
+    </ns0:EventData>
+  </ns0:Event>
+
+  <ns0:Event>
+    <ns0:System>
+      <ns0:Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <ns0:EventID>1</ns0:EventID>
+      <ns0:Version>5</ns0:Version>
+      <ns0:Level>4</ns0:Level>
+      <ns0:Task>1</ns0:Task>
+      <ns0:Opcode>0</ns0:Opcode>
+      <ns0:Keywords>0x8000000000000000</ns0:Keywords>
+      <ns0:TimeCreated SystemTime="2025-01-15T14:22:14.9099358Z" />
+      <ns0:EventRecordID>8114</ns0:EventRecordID>
+      <ns0:Correlation />
+      <ns0:Execution ProcessID="2020" ThreadID="2088" />
+      <ns0:Channel>Microsoft-Windows-Sysmon/Operational</ns0:Channel>
+      <ns0:Computer>ws-eng-1</ns0:Computer>
+      <ns0:Security UserID="S-1-5-18" />
+    </ns0:System>
+    <ns0:EventData>
+      <ns0:Data Name="RuleName" />
+      <ns0:Data Name="UtcTime">2025-01-15 14:22:14.894</ns0:Data>
+      <ns0:Data Name="ProcessGuid">{365abb72-3ed4-5d0b-0000-00106c871a00}</ns0:Data>
+      <ns0:Data Name="ProcessId">888</ns0:Data>
+      <ns0:Data Name="Image">C:\Windows\System32\cmd.exe</ns0:Data>
+      <ns0:Data Name="FileVersion">10.0.19041.1 (win10_21h2)</ns0:Data>
+      <ns0:Data Name="Description">Windows Command Processor</ns0:Data>
+      <ns0:Data Name="Product">Microsoft® Windows® Operating System</ns0:Data>
+      <ns0:Data Name="Company">Microsoft Corporation</ns0:Data>
+      <ns0:Data Name="CommandLine">"cmd"</ns0:Data>
+      <ns0:Data Name="CurrentDirectory">c:\ProgramData\</ns0:Data>
+      <ns0:Data Name="User">CORP\alice</ns0:Data>
+      <ns0:Data Name="LogonGuid">{365abb72-3991-5d0b-0000-002029350100}</ns0:Data>
+      <ns0:Data Name="LogonId">0x13529</ns0:Data>
+      <ns0:Data Name="TerminalSessionId">1</ns0:Data>
+      <ns0:Data Name="IntegrityLevel">High</ns0:Data>
+      <ns0:Data Name="Hashes">SHA1=EE8CBF12D87C4D388F09B4F69BED2E91682920B5,MD5=AD7B9C14083B52BC532FBA5948342B98</ns0:Data>
+      <ns0:Data Name="ParentProcessGuid">{365abb72-3d05-5d0b-0000-001004220d00}</ns0:Data>
+      <ns0:Data Name="ParentProcessId">816</ns0:Data>
+      <ns0:Data Name="ParentImage">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</ns0:Data>
+      <ns0:Data Name="ParentCommandLine">powershell</ns0:Data>
+    </ns0:EventData>
+  </ns0:Event>
+
+  <ns0:Event>
+    <ns0:System>
+      <ns0:Provider Name="Microsoft-Windows-Sysmon" Guid="{5770385f-c22a-43e0-bf4c-06f5698ffbd9}" />
+      <ns0:EventID>1</ns0:EventID>
+      <ns0:Version>5</ns0:Version>
+      <ns0:Level>4</ns0:Level>
+      <ns0:Task>1</ns0:Task>
+      <ns0:Opcode>0</ns0:Opcode>
+      <ns0:Keywords>0x8000000000000000</ns0:Keywords>
+      <ns0:TimeCreated SystemTime="2025-01-15T14:22:08.3318108Z" />
+      <ns0:EventRecordID>8112</ns0:EventRecordID>
+      <ns0:Correlation />
+      <ns0:Execution ProcessID="2020" ThreadID="2088" />
+      <ns0:Channel>Microsoft-Windows-Sysmon/Operational</ns0:Channel>
+      <ns0:Computer>ws-eng-1</ns0:Computer>
+      <ns0:Security UserID="S-1-5-18" />
+    </ns0:System>
+    <ns0:EventData>
+      <ns0:Data Name="RuleName" />
+      <ns0:Data Name="UtcTime">2025-01-15 14:22:08.316</ns0:Data>
+      <ns0:Data Name="ProcessGuid">{365abb72-3ece-5d0b-0000-00107f7f1a00}</ns0:Data>
+      <ns0:Data Name="ProcessId">1284</ns0:Data>
+      <ns0:Data Name="Image">C:\Windows\System32\NETSTAT.EXE</ns0:Data>
+      <ns0:Data Name="FileVersion">10.0.19041.1 (win10_21h2)</ns0:Data>
+      <ns0:Data Name="Description">TCP/IP Netstat Command</ns0:Data>
+      <ns0:Data Name="Product">Microsoft® Windows® Operating System</ns0:Data>
+      <ns0:Data Name="Company">Microsoft Corporation</ns0:Data>
+      <ns0:Data Name="CommandLine">"C:\Windows\system32\NETSTAT.EXE"  -na</ns0:Data>
+      <ns0:Data Name="CurrentDirectory">C:\ProgramData\</ns0:Data>
+      <ns0:Data Name="User">CORP\alice</ns0:Data>
+      <ns0:Data Name="LogonGuid">{365abb72-3991-5d0b-0000-002029350100}</ns0:Data>
+      <ns0:Data Name="LogonId">0x13529</ns0:Data>
+      <ns0:Data Name="TerminalSessionId">1</ns0:Data>
+      <ns0:Data Name="IntegrityLevel">High</ns0:Data>
+      <ns0:Data Name="Hashes">SHA1=F08D57DD80AEDDD7645CBDF27E5AF5EDF99C1F46,MD5=32297BB17E6EC700D0FC869F9ACAF561</ns0:Data>
+      <ns0:Data Name="ParentProcessGuid">{365abb72-3d05-5d0b-0000-001004220d00}</ns0:Data>
+      <ns0:Data Name="ParentProcessId">816</ns0:Data>
+      <ns0:Data Name="ParentImage">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</ns0:Data>
+      <ns0:Data Name="ParentCommandLine">powershell</ns0:Data>
+    </ns0:EventData>
+  </ns0:Event>
+</Events>
