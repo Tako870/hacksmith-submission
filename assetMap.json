@@ -1,0 +1,346 @@
+{
+  "metadata": {
+    "name": "CorpNet-Subnet-A-With-Identity",
+    "subnet": "172.16.34.0/24",
+    "description": "Example corporate subnet with Windows servers, workstations, and an identity/privilege model"
+  },
+  "nodes": [
+    {
+      "id": "edge-router-1",
+      "type": "host",
+      "name": "Edge Router",
+      "ip": "172.16.34.1",
+      "role": "Network Edge",
+      "zone": "Perimeter",
+      "criticality": "high",
+      "os": "Windows Server 2019",
+      "open_ports": [
+        { "port": 443, "protocol": "tcp", "service": "https-management" },
+        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+      ],
+      "services": [
+        { "name": "Routing and Remote Access", "status": "running" },
+        { "name": "Windows Firewall", "status": "running" }
+      ]
+    },
+    {
+      "id": "fw-perim-1",
+      "type": "host",
+      "name": "Perimeter Firewall",
+      "ip": "172.16.34.2",
+      "role": "Firewall",
+      "zone": "Perimeter",
+      "criticality": "high",
+      "os": "Windows Server 2019",
+      "open_ports": [
+        { "port": 443, "protocol": "tcp", "service": "https-management" },
+        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+      ],
+      "services": [
+        { "name": "Windows Defender Firewall", "status": "running" },
+        { "name": "RemoteAccess", "status": "running" }
+      ]
+    },
+    {
+      "id": "vpn-gw-1",
+      "type": "host",
+      "name": "VPN Gateway",
+      "ip": "172.16.34.3",
+      "role": "VPN Gateway",
+      "zone": "Perimeter",
+      "criticality": "medium",
+      "os": "Windows Server 2019",
+      "open_ports": [
+        { "port": 443, "protocol": "tcp", "service": "ssl-vpn" },
+        { "port": 500, "protocol": "udp", "service": "isakmp" },
+        { "port": 4500, "protocol": "udp", "service": "ipsec-nat-t" }
+      ],
+      "services": [
+        { "name": "RemoteAccess", "status": "running" },
+        { "name": "IKEEXT", "status": "running" }
+      ]
+    },
+    {
+      "id": "web-1",
+      "type": "host",
+      "name": "Public Web Server",
+      "ip": "172.16.34.5",
+      "role": "Web Server",
+      "zone": "DMZ",
+      "criticality": "high",
+      "os": "Windows Server 2019",
+      "open_ports": [
+        { "port": 80, "protocol": "tcp", "service": "http" },
+        { "port": 443, "protocol": "tcp", "service": "https" },
+        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+      ],
+      "services": [
+        { "name": "W3SVC", "display_name": "World Wide Web Publishing Service", "status": "running" },
+        { "name": "WAS", "display_name": "Windows Process Activation Service", "status": "running" },
+        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+      ]
+    },
+    {
+      "id": "app-1",
+      "type": "host",
+      "name": "Application Server",
+      "ip": "172.16.34.7",
+      "role": "App Server",
+      "zone": "Server",
+      "criticality": "high",
+      "os": "Windows Server 2019",
+      "open_ports": [
+        { "port": 8080, "protocol": "tcp", "service": "http-alt" },
+        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+      ],
+      "services": [
+        { "name": "AppServiceX", "display_name": "Line-of-Business App Service", "status": "running" },
+        { "name": "WAS", "display_name": "Windows Process Activation Service", "status": "running" },
+        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+      ]
+    },
+    {
+      "id": "db-1",
+      "type": "host",
+      "name": "Customer DB Server",
+      "ip": "172.16.34.6",
+      "role": "Database Server",
+      "zone": "Server",
+      "criticality": "critical",
+      "os": "Windows Server 2019",
+      "open_ports": [
+        { "port": 1433, "protocol": "tcp", "service": "mssql" },
+        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+      ],
+      "services": [
+        { "name": "MSSQLSERVER", "display_name": "SQL Server (MSSQLSERVER)", "status": "running" },
+        { "name": "SQLBrowser", "display_name": "SQL Server Browser", "status": "running" },
+        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+      ]
+    },
+    {
+      "id": "file-1",
+      "type": "host",
+      "name": "File Server",
+      "ip": "172.16.34.8",
+      "role": "File Server",
+      "zone": "Server",
+      "criticality": "medium",
+      "os": "Windows Server 2019",
+      "open_ports": [
+        { "port": 445, "protocol": "tcp", "service": "smb" },
+        { "port": 139, "protocol": "tcp", "service": "netbios-ssn" },
+        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+      ],
+      "services": [
+        { "name": "LanmanServer", "display_name": "Server", "status": "running" },
+        { "name": "LanmanWorkstation", "display_name": "Workstation", "status": "running" },
+        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+      ]
+    },
+    {
+      "id": "mail-1",
+      "type": "host",
+      "name": "Mail Server",
+      "ip": "172.16.34.9",
+      "role": "Mail Server",
+      "zone": "Server",
+      "criticality": "medium",
+      "os": "Windows Server 2019",
+      "open_ports": [
+        { "port": 25, "protocol": "tcp", "service": "smtp" },
+        { "port": 587, "protocol": "tcp", "service": "submission" },
+        { "port": 443, "protocol": "tcp", "service": "owa/ews" },
+        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+      ],
+      "services": [
+        { "name": "MSExchangeTransport", "display_name": "Microsoft Exchange Transport", "status": "running" },
+        { "name": "MSExchangeFrontEndTransport", "display_name": "Microsoft Exchange Frontend Transport", "status": "running" },
+        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+      ]
+    },
+    {
+      "id": "dc-1",
+      "type": "host",
+      "name": "Domain Controller",
+      "ip": "172.16.34.10",
+      "role": "Domain Controller",
+      "zone": "Server",
+      "criticality": "critical",
+      "os": "Windows Server 2019 (Domain Controller)",
+      "open_ports": [
+        { "port": 88, "protocol": "tcp", "service": "kerberos" },
+        { "port": 88, "protocol": "udp", "service": "kerberos" },
+        { "port": 389, "protocol": "tcp", "service": "ldap" },
+        { "port": 389, "protocol": "udp", "service": "ldap" },
+        { "port": 445, "protocol": "tcp", "service": "smb" },
+        { "port": 53, "protocol": "tcp", "service": "dns" },
+        { "port": 53, "protocol": "udp", "service": "dns" },
+        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+      ],
+      "services": [
+        { "name": "NTDS", "display_name": "Active Directory Domain Services", "status": "running" },
+        { "name": "DNS", "display_name": "DNS Server", "status": "running" },
+        { "name": "KDC", "display_name": "Kerberos Key Distribution Center", "status": "running" },
+        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+      ]
+    },
+    {
+      "id": "jump-1",
+      "type": "host",
+      "name": "Admin Jump Host",
+      "ip": "172.16.34.11",
+      "role": "Jump Host",
+      "zone": "Admin",
+      "criticality": "high",
+      "os": "Windows Server 2019",
+      "open_ports": [
+        { "port": 3389, "protocol": "tcp", "service": "rdp" },
+        { "port": 5985, "protocol": "tcp", "service": "winrm-http" }
+      ],
+      "services": [
+        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" },
+        { "name": "WinRM", "display_name": "Windows Remote Management", "status": "running" }
+      ]
+    },
+    {
+      "id": "ws-eng-1",
+      "type": "host",
+      "name": "Engineer Workstation",
+      "ip": "172.16.34.21",
+      "role": "Workstation",
+      "zone": "User",
+      "criticality": "medium",
+      "os": "Windows 10 Enterprise",
+      "open_ports": [
+        { "port": 3389, "protocol": "tcp", "service": "rdp" },
+        { "port": 445, "protocol": "tcp", "service": "smb" }
+      ],
+      "services": [
+        { "name": "WinDefend", "display_name": "Microsoft Defender Antivirus Service", "status": "running" },
+        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+      ]
+    },
+    {
+      "id": "ws-fin-1",
+      "type": "host",
+      "name": "Finance Workstation",
+      "ip": "172.16.34.22",
+      "role": "Workstation",
+      "zone": "User",
+      "criticality": "medium",
+      "os": "Windows 10 Enterprise",
+      "open_ports": [
+        { "port": 3389, "protocol": "tcp", "service": "rdp" },
+        { "port": 445, "protocol": "tcp", "service": "smb" }
+      ],
+      "services": [
+        { "name": "WinDefend", "display_name": "Microsoft Defender Antivirus Service", "status": "running" },
+        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+      ]
+    },
+
+    {
+      "id": "user-alice",
+      "type": "user",
+      "name": "Alice Tan",
+      "sam_account_name": "ALICE",
+      "upn": "alice@corp.local",
+      "department": "Engineering",
+      "privilege_level": "standard"
+    },
+    {
+      "id": "user-bob",
+      "type": "user",
+      "name": "Bob Lee",
+      "sam_account_name": "BOB",
+      "upn": "bob@corp.local",
+      "department": "IT",
+      "privilege_level": "high"
+    },
+    {
+      "id": "user-carol",
+      "type": "user",
+      "name": "Carol Ng",
+      "sam_account_name": "CAROL",
+      "upn": "carol@corp.local",
+      "department": "Finance",
+      "privilege_level": "standard"
+    },
+    {
+      "id": "user-eve",
+      "type": "user",
+      "name": "Eve Lim",
+      "sam_account_name": "EVE",
+      "upn": "eve@corp.local",
+      "department": "SOC",
+      "privilege_level": "elevated"
+    },
+    {
+      "id": "group-domain-admins",
+      "type": "group",
+      "name": "Domain Admins",
+      "sam_account_name": "Domain Admins"
+    },
+    {
+      "id": "group-it-server-admins",
+      "type": "group",
+      "name": "IT Server Admins",
+      "sam_account_name": "IT-Server-Admins"
+    },
+    {
+      "id": "group-finance-staff",
+      "type": "group",
+      "name": "Finance Staff",
+      "sam_account_name": "Finance-Users"
+    }
+  ],
+  "edges": [
+    { "source": "edge-router-1", "target": "fw-perim-1", "relation": "connected_to" },
+    { "source": "fw-perim-1", "target": "vpn-gw-1", "relation": "allows_vpn_to" },
+
+    { "source": "fw-perim-1", "target": "web-1", "relation": "dmz_exposed" },
+    { "source": "web-1", "target": "app-1", "relation": "app_backend" },
+    { "source": "app-1", "target": "db-1", "relation": "db_backend" },
+
+    { "source": "fw-perim-1", "target": "mail-1", "relation": "allows_smtp_to" },
+    { "source": "fw-perim-1", "target": "file-1", "relation": "allows_fileshare_to" },
+
+    { "source": "dc-1", "target": "app-1", "relation": "authenticates" },
+    { "source": "dc-1", "target": "db-1", "relation": "authenticates" },
+    { "source": "dc-1", "target": "file-1", "relation": "authenticates" },
+    { "source": "dc-1", "target": "ws-eng-1", "relation": "authenticates" },
+    { "source": "dc-1", "target": "ws-fin-1", "relation": "authenticates" },
+
+    { "source": "jump-1", "target": "web-1", "relation": "admin_access" },
+    { "source": "jump-1", "target": "app-1", "relation": "admin_access" },
+    { "source": "jump-1", "target": "db-1", "relation": "admin_access" },
+
+    { "source": "ws-eng-1", "target": "web-1", "relation": "user_http_access" },
+    { "source": "ws-eng-1", "target": "file-1", "relation": "user_fileshare_access" },
+
+    { "source": "ws-fin-1", "target": "app-1", "relation": "business_app_access" },
+    { "source": "ws-fin-1", "target": "file-1", "relation": "finance_share_access" },
+
+    { "source": "user-bob", "target": "group-domain-admins", "relation": "member_of" },
+    { "source": "user-eve", "target": "group-domain-admins", "relation": "member_of" },
+    { "source": "user-alice", "target": "group-it-server-admins", "relation": "member_of" },
+    { "source": "user-carol", "target": "group-finance-staff", "relation": "member_of" },
+
+    { "source": "group-domain-admins", "target": "dc-1", "relation": "admin_on" },
+    { "source": "group-domain-admins", "target": "db-1", "relation": "admin_on" },
+    { "source": "group-domain-admins", "target": "file-1", "relation": "admin_on" },
+    { "source": "group-domain-admins", "target": "mail-1", "relation": "admin_on" },
+
+    { "source": "group-it-server-admins", "target": "web-1", "relation": "local_admin_on" },
+    { "source": "group-it-server-admins", "target": "app-1", "relation": "local_admin_on" },
+
+    { "source": "group-finance-staff", "target": "ws-fin-1", "relation": "interactive_logon" },
+    { "source": "group-finance-staff", "target": "file-1", "relation": "data_access" },
+
+    { "source": "user-alice", "target": "ws-eng-1", "relation": "interactive_logon" },
+    { "source": "user-bob", "target": "jump-1", "relation": "interactive_logon" },
+    { "source": "user-carol", "target": "ws-fin-1", "relation": "interactive_logon" },
+    { "source": "user-eve", "target": "ws-eng-1", "relation": "interactive_logon" }
+  ]
+}
