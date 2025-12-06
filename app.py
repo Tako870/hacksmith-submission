@@ -293,6 +293,55 @@ def api_upload_logs():
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route('/uploadall', methods=['POST'])
+def upload_all():
+    """
+    Accept both an optional asset map JSON and a required Sysmon XML log file
+    in one multipart/form-data request. Process asset map first (if provided),
+    then parse logs and resolve assets. Returns a rendered results page.
+    """
+    # Files
+    asset_file = request.files.get('asset_map')
+    log_file = request.files.get('log_file')
+
+    if not log_file:
+        flash("No log file uploaded", "error")
+        return redirect(url_for('index'))
+
+    # If asset map provided, try to load and save it
+    if asset_file and asset_file.filename:
+        try:
+            graph = json.load(asset_file.stream)
+            if not isinstance(graph, dict) or "nodes" not in graph or "edges" not in graph:
+                flash("Invalid asset map format (missing 'nodes' or 'edges'). Skipped.", "error")
+            else:
+                save_asset_map(graph)
+                flash("Asset map uploaded successfully.", "success")
+        except json.JSONDecodeError:
+            flash("Uploaded asset map is not valid JSON. Skipped.", "error")
+
+    # Parse log file
+    try:
+        content = log_file.read()
+        if log_file.filename.endswith('.xml'):
+            canonical_events = parse_sysmon_xml(content)
+        else:
+            flash("Unsupported log format. Please upload .xml Sysmon logs.", "error")
+            return redirect(url_for('index'))
+
+        # Resolve against current asset map
+        asset_map = load_asset_map()
+        enriched_events = [resolve_assets(e, asset_map) for e in canonical_events]
+
+        # Render results page
+        return render_template('uploadResults.html', events=enriched_events, count=len(enriched_events))
+
+    except Exception as e:
+        flash(f"Error processing log file: {str(e)}", "error")
+        return redirect(url_for('index'))
+@app.route('/uploadmap', methods=['GET', 'POST'])
 def upload_asset_map():
     """
     GET: show a simple form to upload an asset map JSON.

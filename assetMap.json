@@ -15,12 +15,26 @@
       "criticality": "high",
       "os": "Windows Server 2019",
       "open_ports": [
-        { "port": 443, "protocol": "tcp", "service": "https-management" },
-        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+        {
+          "port": 443,
+          "protocol": "tcp",
+          "service": "https-management"
+        },
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        }
       ],
       "services": [
-        { "name": "Routing and Remote Access", "status": "running" },
-        { "name": "Windows Firewall", "status": "running" }
+        {
+          "name": "Routing and Remote Access",
+          "status": "running"
+        },
+        {
+          "name": "Windows Firewall",
+          "status": "running"
+        }
       ]
     },
     {
@@ -33,12 +47,26 @@
       "criticality": "high",
       "os": "Windows Server 2019",
       "open_ports": [
-        { "port": 443, "protocol": "tcp", "service": "https-management" },
-        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+        {
+          "port": 443,
+          "protocol": "tcp",
+          "service": "https-management"
+        },
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        }
       ],
       "services": [
-        { "name": "Windows Defender Firewall", "status": "running" },
-        { "name": "RemoteAccess", "status": "running" }
+        {
+          "name": "Windows Defender Firewall",
+          "status": "running"
+        },
+        {
+          "name": "RemoteAccess",
+          "status": "running"
+        }
       ]
     },
     {
@@ -51,13 +79,31 @@
       "criticality": "medium",
       "os": "Windows Server 2019",
       "open_ports": [
-        { "port": 443, "protocol": "tcp", "service": "ssl-vpn" },
-        { "port": 500, "protocol": "udp", "service": "isakmp" },
-        { "port": 4500, "protocol": "udp", "service": "ipsec-nat-t" }
+        {
+          "port": 443,
+          "protocol": "tcp",
+          "service": "ssl-vpn"
+        },
+        {
+          "port": 500,
+          "protocol": "udp",
+          "service": "isakmp"
+        },
+        {
+          "port": 4500,
+          "protocol": "udp",
+          "service": "ipsec-nat-t"
+        }
       ],
       "services": [
-        { "name": "RemoteAccess", "status": "running" },
-        { "name": "IKEEXT", "status": "running" }
+        {
+          "name": "RemoteAccess",
+          "status": "running"
+        },
+        {
+          "name": "IKEEXT",
+          "status": "running"
+        }
       ]
     },
     {
@@ -70,14 +116,38 @@
       "criticality": "high",
       "os": "Windows Server 2019",
       "open_ports": [
-        { "port": 80, "protocol": "tcp", "service": "http" },
-        { "port": 443, "protocol": "tcp", "service": "https" },
-        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+        {
+          "port": 80,
+          "protocol": "tcp",
+          "service": "http"
+        },
+        {
+          "port": 443,
+          "protocol": "tcp",
+          "service": "https"
+        },
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        }
       ],
       "services": [
-        { "name": "W3SVC", "display_name": "World Wide Web Publishing Service", "status": "running" },
-        { "name": "WAS", "display_name": "Windows Process Activation Service", "status": "running" },
-        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+        {
+          "name": "W3SVC",
+          "display_name": "World Wide Web Publishing Service",
+          "status": "running"
+        },
+        {
+          "name": "WAS",
+          "display_name": "Windows Process Activation Service",
+          "status": "running"
+        },
+        {
+          "name": "TermService",
+          "display_name": "Remote Desktop Services",
+          "status": "running"
+        }
       ]
     },
     {
@@ -90,13 +160,33 @@
       "criticality": "high",
       "os": "Windows Server 2019",
       "open_ports": [
-        { "port": 8080, "protocol": "tcp", "service": "http-alt" },
-        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+        {
+          "port": 8080,
+          "protocol": "tcp",
+          "service": "http-alt"
+        },
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        }
       ],
       "services": [
-        { "name": "AppServiceX", "display_name": "Line-of-Business App Service", "status": "running" },
-        { "name": "WAS", "display_name": "Windows Process Activation Service", "status": "running" },
-        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+        {
+          "name": "AppServiceX",
+          "display_name": "Line-of-Business App Service",
+          "status": "running"
+        },
+        {
+          "name": "WAS",
+          "display_name": "Windows Process Activation Service",
+          "status": "running"
+        },
+        {
+          "name": "TermService",
+          "display_name": "Remote Desktop Services",
+          "status": "running"
+        }
       ]
     },
     {
@@ -109,13 +199,33 @@
       "criticality": "critical",
       "os": "Windows Server 2019",
       "open_ports": [
-        { "port": 1433, "protocol": "tcp", "service": "mssql" },
-        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+        {
+          "port": 1433,
+          "protocol": "tcp",
+          "service": "mssql"
+        },
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        }
       ],
       "services": [
-        { "name": "MSSQLSERVER", "display_name": "SQL Server (MSSQLSERVER)", "status": "running" },
-        { "name": "SQLBrowser", "display_name": "SQL Server Browser", "status": "running" },
-        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+        {
+          "name": "MSSQLSERVER",
+          "display_name": "SQL Server (MSSQLSERVER)",
+          "status": "running"
+        },
+        {
+          "name": "SQLBrowser",
+          "display_name": "SQL Server Browser",
+          "status": "running"
+        },
+        {
+          "name": "TermService",
+          "display_name": "Remote Desktop Services",
+          "status": "running"
+        }
       ]
     },
     {
@@ -128,14 +238,38 @@
       "criticality": "medium",
       "os": "Windows Server 2019",
       "open_ports": [
-        { "port": 445, "protocol": "tcp", "service": "smb" },
-        { "port": 139, "protocol": "tcp", "service": "netbios-ssn" },
-        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+        {
+          "port": 445,
+          "protocol": "tcp",
+          "service": "smb"
+        },
+        {
+          "port": 139,
+          "protocol": "tcp",
+          "service": "netbios-ssn"
+        },
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        }
       ],
       "services": [
-        { "name": "LanmanServer", "display_name": "Server", "status": "running" },
-        { "name": "LanmanWorkstation", "display_name": "Workstation", "status": "running" },
-        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+        {
+          "name": "LanmanServer",
+          "display_name": "Server",
+          "status": "running"
+        },
+        {
+          "name": "LanmanWorkstation",
+          "display_name": "Workstation",
+          "status": "running"
+        },
+        {
+          "name": "TermService",
+          "display_name": "Remote Desktop Services",
+          "status": "running"
+        }
       ]
     },
     {
@@ -148,15 +282,43 @@
       "criticality": "medium",
       "os": "Windows Server 2019",
       "open_ports": [
-        { "port": 25, "protocol": "tcp", "service": "smtp" },
-        { "port": 587, "protocol": "tcp", "service": "submission" },
-        { "port": 443, "protocol": "tcp", "service": "owa/ews" },
-        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+        {
+          "port": 25,
+          "protocol": "tcp",
+          "service": "smtp"
+        },
+        {
+          "port": 587,
+          "protocol": "tcp",
+          "service": "submission"
+        },
+        {
+          "port": 443,
+          "protocol": "tcp",
+          "service": "owa/ews"
+        },
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        }
       ],
       "services": [
-        { "name": "MSExchangeTransport", "display_name": "Microsoft Exchange Transport", "status": "running" },
-        { "name": "MSExchangeFrontEndTransport", "display_name": "Microsoft Exchange Frontend Transport", "status": "running" },
-        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+        {
+          "name": "MSExchangeTransport",
+          "display_name": "Microsoft Exchange Transport",
+          "status": "running"
+        },
+        {
+          "name": "MSExchangeFrontEndTransport",
+          "display_name": "Microsoft Exchange Frontend Transport",
+          "status": "running"
+        },
+        {
+          "name": "TermService",
+          "display_name": "Remote Desktop Services",
+          "status": "running"
+        }
       ]
     },
     {
@@ -169,20 +331,68 @@
       "criticality": "critical",
       "os": "Windows Server 2019 (Domain Controller)",
       "open_ports": [
-        { "port": 88, "protocol": "tcp", "service": "kerberos" },
-        { "port": 88, "protocol": "udp", "service": "kerberos" },
-        { "port": 389, "protocol": "tcp", "service": "ldap" },
-        { "port": 389, "protocol": "udp", "service": "ldap" },
-        { "port": 445, "protocol": "tcp", "service": "smb" },
-        { "port": 53, "protocol": "tcp", "service": "dns" },
-        { "port": 53, "protocol": "udp", "service": "dns" },
-        { "port": 3389, "protocol": "tcp", "service": "rdp" }
+        {
+          "port": 88,
+          "protocol": "tcp",
+          "service": "kerberos"
+        },
+        {
+          "port": 88,
+          "protocol": "udp",
+          "service": "kerberos"
+        },
+        {
+          "port": 389,
+          "protocol": "tcp",
+          "service": "ldap"
+        },
+        {
+          "port": 389,
+          "protocol": "udp",
+          "service": "ldap"
+        },
+        {
+          "port": 445,
+          "protocol": "tcp",
+          "service": "smb"
+        },
+        {
+          "port": 53,
+          "protocol": "tcp",
+          "service": "dns"
+        },
+        {
+          "port": 53,
+          "protocol": "udp",
+          "service": "dns"
+        },
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        }
       ],
       "services": [
-        { "name": "NTDS", "display_name": "Active Directory Domain Services", "status": "running" },
-        { "name": "DNS", "display_name": "DNS Server", "status": "running" },
-        { "name": "KDC", "display_name": "Kerberos Key Distribution Center", "status": "running" },
-        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+        {
+          "name": "NTDS",
+          "display_name": "Active Directory Domain Services",
+          "status": "running"
+        },
+        {
+          "name": "DNS",
+          "display_name": "DNS Server",
+          "status": "running"
+        },
+        {
+          "name": "KDC",
+          "display_name": "Kerberos Key Distribution Center",
+          "status": "running"
+        },
+        {
+          "name": "TermService",
+          "display_name": "Remote Desktop Services",
+          "status": "running"
+        }
       ]
     },
     {
@@ -195,12 +405,28 @@
       "criticality": "high",
       "os": "Windows Server 2019",
       "open_ports": [
-        { "port": 3389, "protocol": "tcp", "service": "rdp" },
-        { "port": 5985, "protocol": "tcp", "service": "winrm-http" }
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        },
+        {
+          "port": 5985,
+          "protocol": "tcp",
+          "service": "winrm-http"
+        }
       ],
       "services": [
-        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" },
-        { "name": "WinRM", "display_name": "Windows Remote Management", "status": "running" }
+        {
+          "name": "TermService",
+          "display_name": "Remote Desktop Services",
+          "status": "running"
+        },
+        {
+          "name": "WinRM",
+          "display_name": "Windows Remote Management",
+          "status": "running"
+        }
       ]
     },
     {
@@ -213,12 +439,28 @@
       "criticality": "medium",
       "os": "Windows 10 Enterprise",
       "open_ports": [
-        { "port": 3389, "protocol": "tcp", "service": "rdp" },
-        { "port": 445, "protocol": "tcp", "service": "smb" }
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        },
+        {
+          "port": 445,
+          "protocol": "tcp",
+          "service": "smb"
+        }
       ],
       "services": [
-        { "name": "WinDefend", "display_name": "Microsoft Defender Antivirus Service", "status": "running" },
-        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+        {
+          "name": "WinDefend",
+          "display_name": "Microsoft Defender Antivirus Service",
+          "status": "running"
+        },
+        {
+          "name": "TermService",
+          "display_name": "Remote Desktop Services",
+          "status": "running"
+        }
       ]
     },
     {
@@ -231,15 +473,30 @@
       "criticality": "medium",
       "os": "Windows 10 Enterprise",
       "open_ports": [
-        { "port": 3389, "protocol": "tcp", "service": "rdp" },
-        { "port": 445, "protocol": "tcp", "service": "smb" }
+        {
+          "port": 3389,
+          "protocol": "tcp",
+          "service": "rdp"
+        },
+        {
+          "port": 445,
+          "protocol": "tcp",
+          "service": "smb"
+        }
       ],
       "services": [
-        { "name": "WinDefend", "display_name": "Microsoft Defender Antivirus Service", "status": "running" },
-        { "name": "TermService", "display_name": "Remote Desktop Services", "status": "running" }
+        {
+          "name": "WinDefend",
+          "display_name": "Microsoft Defender Antivirus Service",
+          "status": "running"
+        },
+        {
+          "name": "TermService",
+          "display_name": "Remote Desktop Services",
+          "status": "running"
+        }
       ]
     },
-
     {
       "id": "user-alice",
       "type": "user",
@@ -296,51 +553,180 @@
     }
   ],
   "edges": [
-    { "source": "edge-router-1", "target": "fw-perim-1", "relation": "connected_to" },
-    { "source": "fw-perim-1", "target": "vpn-gw-1", "relation": "allows_vpn_to" },
-
-    { "source": "fw-perim-1", "target": "web-1", "relation": "dmz_exposed" },
-    { "source": "web-1", "target": "app-1", "relation": "app_backend" },
-    { "source": "app-1", "target": "db-1", "relation": "db_backend" },
-
-    { "source": "fw-perim-1", "target": "mail-1", "relation": "allows_smtp_to" },
-    { "source": "fw-perim-1", "target": "file-1", "relation": "allows_fileshare_to" },
-
-    { "source": "dc-1", "target": "app-1", "relation": "authenticates" },
-    { "source": "dc-1", "target": "db-1", "relation": "authenticates" },
-    { "source": "dc-1", "target": "file-1", "relation": "authenticates" },
-    { "source": "dc-1", "target": "ws-eng-1", "relation": "authenticates" },
-    { "source": "dc-1", "target": "ws-fin-1", "relation": "authenticates" },
-
-    { "source": "jump-1", "target": "web-1", "relation": "admin_access" },
-    { "source": "jump-1", "target": "app-1", "relation": "admin_access" },
-    { "source": "jump-1", "target": "db-1", "relation": "admin_access" },
-
-    { "source": "ws-eng-1", "target": "web-1", "relation": "user_http_access" },
-    { "source": "ws-eng-1", "target": "file-1", "relation": "user_fileshare_access" },
-
-    { "source": "ws-fin-1", "target": "app-1", "relation": "business_app_access" },
-    { "source": "ws-fin-1", "target": "file-1", "relation": "finance_share_access" },
-
-    { "source": "user-bob", "target": "group-domain-admins", "relation": "member_of" },
-    { "source": "user-eve", "target": "group-domain-admins", "relation": "member_of" },
-    { "source": "user-alice", "target": "group-it-server-admins", "relation": "member_of" },
-    { "source": "user-carol", "target": "group-finance-staff", "relation": "member_of" },
-
-    { "source": "group-domain-admins", "target": "dc-1", "relation": "admin_on" },
-    { "source": "group-domain-admins", "target": "db-1", "relation": "admin_on" },
-    { "source": "group-domain-admins", "target": "file-1", "relation": "admin_on" },
-    { "source": "group-domain-admins", "target": "mail-1", "relation": "admin_on" },
-
-    { "source": "group-it-server-admins", "target": "web-1", "relation": "local_admin_on" },
-    { "source": "group-it-server-admins", "target": "app-1", "relation": "local_admin_on" },
-
-    { "source": "group-finance-staff", "target": "ws-fin-1", "relation": "interactive_logon" },
-    { "source": "group-finance-staff", "target": "file-1", "relation": "data_access" },
-
-    { "source": "user-alice", "target": "ws-eng-1", "relation": "interactive_logon" },
-    { "source": "user-bob", "target": "jump-1", "relation": "interactive_logon" },
-    { "source": "user-carol", "target": "ws-fin-1", "relation": "interactive_logon" },
-    { "source": "user-eve", "target": "ws-eng-1", "relation": "interactive_logon" }
+    {
+      "source": "edge-router-1",
+      "target": "fw-perim-1",
+      "relation": "connected_to"
+    },
+    {
+      "source": "fw-perim-1",
+      "target": "vpn-gw-1",
+      "relation": "allows_vpn_to"
+    },
+    {
+      "source": "fw-perim-1",
+      "target": "web-1",
+      "relation": "dmz_exposed"
+    },
+    {
+      "source": "web-1",
+      "target": "app-1",
+      "relation": "app_backend"
+    },
+    {
+      "source": "app-1",
+      "target": "db-1",
+      "relation": "db_backend"
+    },
+    {
+      "source": "fw-perim-1",
+      "target": "mail-1",
+      "relation": "allows_smtp_to"
+    },
+    {
+      "source": "fw-perim-1",
+      "target": "file-1",
+      "relation": "allows_fileshare_to"
+    },
+    {
+      "source": "dc-1",
+      "target": "app-1",
+      "relation": "authenticates"
+    },
+    {
+      "source": "dc-1",
+      "target": "db-1",
+      "relation": "authenticates"
+    },
+    {
+      "source": "dc-1",
+      "target": "file-1",
+      "relation": "authenticates"
+    },
+    {
+      "source": "dc-1",
+      "target": "ws-eng-1",
+      "relation": "authenticates"
+    },
+    {
+      "source": "dc-1",
+      "target": "ws-fin-1",
+      "relation": "authenticates"
+    },
+    {
+      "source": "jump-1",
+      "target": "web-1",
+      "relation": "admin_access"
+    },
+    {
+      "source": "jump-1",
+      "target": "app-1",
+      "relation": "admin_access"
+    },
+    {
+      "source": "jump-1",
+      "target": "db-1",
+      "relation": "admin_access"
+    },
+    {
+      "source": "ws-eng-1",
+      "target": "web-1",
+      "relation": "user_http_access"
+    },
+    {
+      "source": "ws-eng-1",
+      "target": "file-1",
+      "relation": "user_fileshare_access"
+    },
+    {
+      "source": "ws-fin-1",
+      "target": "app-1",
+      "relation": "business_app_access"
+    },
+    {
+      "source": "ws-fin-1",
+      "target": "file-1",
+      "relation": "finance_share_access"
+    },
+    {
+      "source": "user-bob",
+      "target": "group-domain-admins",
+      "relation": "member_of"
+    },
+    {
+      "source": "user-eve",
+      "target": "group-domain-admins",
+      "relation": "member_of"
+    },
+    {
+      "source": "user-alice",
+      "target": "group-it-server-admins",
+      "relation": "member_of"
+    },
+    {
+      "source": "user-carol",
+      "target": "group-finance-staff",
+      "relation": "member_of"
+    },
+    {
+      "source": "group-domain-admins",
+      "target": "dc-1",
+      "relation": "admin_on"
+    },
+    {
+      "source": "group-domain-admins",
+      "target": "db-1",
+      "relation": "admin_on"
+    },
+    {
+      "source": "group-domain-admins",
+      "target": "file-1",
+      "relation": "admin_on"
+    },
+    {
+      "source": "group-domain-admins",
+      "target": "mail-1",
+      "relation": "admin_on"
+    },
+    {
+      "source": "group-it-server-admins",
+      "target": "web-1",
+      "relation": "local_admin_on"
+    },
+    {
+      "source": "group-it-server-admins",
+      "target": "app-1",
+      "relation": "local_admin_on"
+    },
+    {
+      "source": "group-finance-staff",
+      "target": "ws-fin-1",
+      "relation": "interactive_logon"
+    },
+    {
+      "source": "group-finance-staff",
+      "target": "file-1",
+      "relation": "data_access"
+    },
+    {
+      "source": "user-alice",
+      "target": "ws-eng-1",
+      "relation": "interactive_logon"
+    },
+    {
+      "source": "user-bob",
+      "target": "jump-1",
+      "relation": "interactive_logon"
+    },
+    {
+      "source": "user-carol",
+      "target": "ws-fin-1",
+      "relation": "interactive_logon"
+    },
+    {
+      "source": "user-eve",
+      "target": "ws-eng-1",
+      "relation": "interactive_logon"
+    }
   ]
 }

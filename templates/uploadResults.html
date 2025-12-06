@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Results{% endblock %}
+
+{% block header %}
+<h1>Parsed Log Results</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-10 offset-md-1">
+      <div class="card">
+        <div class="card-body">
+          <p class="lead">{{ count }} events parsed and enriched.</p>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Event Type</th>
+                  <th>Host</th>
+                  <th>Src Asset</th>
+                  <th>Dst Asset</th>
+                  <th>Severity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for e in events %}
+                <tr>
+                  <td>{{ e.timestamp }}</td>
+                  <td>{{ e.event_type }}</td>
+                  <td>{{ e.hostname }}</td>
+                  <td>{{ e.src_asset_id | default('') }}</td>
+                  <td>{{ e.dst_asset_id | default('') }}</td>
+                  <td>{{ e.severity }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-3">
+            <a href="{{ url_for('index') }}" class="btn btn-secondary">Back</a>
+            <a href="{{ url_for('render_map') }}" class="btn btn-primary ms-2">View Asset Map</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
