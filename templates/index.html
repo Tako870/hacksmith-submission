@@ -7,5 +7,29 @@
 {% block title %}Hacksmith Submission Portal{% endblock %}
 
 {% block content %}
-<p>Please use the navigation menu to submit your project or view existing submissions.</p>
+<div class="container mt-4">
+    <p class="lead">Please use the navigation menu to submit your project or view existing submissions.</p>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Upload Logs</h5>
+                    <p class="card-text">Upload and process incident log files.</p>
+                    <a href="{{ url_for('upload_logs') }}" class="btn btn-primary">Go to Upload Logs</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">View Asset Map</h5>
+                    <p class="card-text">View the interactive asset map visualization.</p>
+                    <a href="{{ url_for('render_map') }}" class="btn btn-primary">View Asset Map</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

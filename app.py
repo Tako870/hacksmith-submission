@@ -203,7 +203,7 @@ def resolve_assets(event, asset_map):
 
 @app.route('/')
 def index():
-    return 'Future Black Hat Arsenal Exhibitors.'
+    return render_template('index.html')
 
 
 @app.route('/uploadlogs', methods=['GET', 'POST'])
