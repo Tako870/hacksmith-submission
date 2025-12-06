@@ -59,13 +59,12 @@ Now output ONLY the JSON.
 '''
 
 # =========================================
-
-def main():
+def analyze_perimeter_logs(logpath, assetpath) :
     # Read raw files
-    with open("events.xml", "r", encoding="utf-8") as f:
+    with open(logpath, "r", encoding="utf-8") as f:
         sysmon_logs = f.read()
 
-    with open("assets.json", "r", encoding="utf-8") as f:
+    with open(assetpath, "r", encoding="utf-8") as f:
         asset_map = json.load(f)
 
     # Format prompt
@@ -87,7 +86,5 @@ def main():
     raw_output = response.choices[0].message.content
     json_str = extract_json_block(raw_output)
     result = json.loads(json_str)
-    print(json.dumps(result, indent=2))
+    return result
 
-if __name__ == "__main__":
-    main()

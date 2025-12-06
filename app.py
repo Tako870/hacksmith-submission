@@ -5,6 +5,7 @@ import os
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from qwenAPI2 import analyze_sysmon_logs
+from qwenAPI3 import analyze_perimeter_logs
 
 app = Flask(__name__)
 
@@ -240,95 +241,6 @@ def resolve_assets(event, asset_map):
 def index():
     return render_template('index.html')
 
-# @app.route('/uploadlogs', methods=['GET', 'POST'])
-# def upload_logs():
-#     """
-#     GET: show a simple form to upload security logs (XML, JSON, etc).
-#     POST: accept a log file, parse it to canonical events, resolve assets,
-#           and return the enriched events for visualization.
-#     """
-#     if request.method == 'POST':
-#         log_file = request.files.get('log_file')
-#         if not log_file:
-#             flash("No log file uploaded", "error")
-#             return redirect(url_for('upload_logs'))
-
-#         try:
-#             # Read file content
-#             content = log_file.read()
-            
-#             # Try to parse as XML (Sysmon format)
-#             if log_file.filename.endswith('.xml'):
-#                 try:
-#                     canonical_events = parse_sysmon_xml(content)
-#                 except ValueError as e:
-#                     flash(f"Failed to parse XML: {str(e)}", "error")
-#                     return redirect(url_for('upload_logs'))
-#             else:
-#                 flash("Unsupported file format. Please upload a .xml Sysmon log file.", "error")
-#                 return redirect(url_for('upload_logs'))
-
-#             # Load asset map for resolution
-#             asset_map = load_asset_map()
-            
-#             # Resolve assets for all events
-#             enriched_events = []
-#             for event in canonical_events:
-#                 resolved_event = resolve_assets(event, asset_map)
-#                 enriched_events.append(resolved_event)
-
-#             # Return enriched events as JSON
-#             return jsonify({
-#                 "status": "success",
-#                 "event_count": len(enriched_events),
-#                 "events": enriched_events
-#             })
-
-#         except Exception as e:
-#             flash(f"Error processing log file: {str(e)}", "error")
-#             return redirect(url_for('upload_logs'))
-
-#     # For GET: show upload form
-#     return render_template('uploadLogs.html')
-
-
-# @app.route('/api/uploadlogs', methods=['POST'])
-# def api_upload_logs():
-#     """
-#     API endpoint for uploading logs and getting back canonical + asset-resolved events.
-#     Accepts multipart/form-data with 'log_file' field.
-#     Returns JSON with parsed events.
-#     """
-#     log_file = request.files.get('log_file')
-#     if not log_file:
-#         return jsonify({"status": "error", "message": "No log file uploaded"}), 400
-
-#     try:
-#         content = log_file.read()
-        
-#         # Detect format by file extension
-#         if log_file.filename.endswith('.xml'):
-#             canonical_events = parse_sysmon_xml(content)
-#         else:
-#             return jsonify({"status": "error", "message": "Unsupported file format. Use .xml"}), 400
-
-#         # Load asset map and resolve
-#         asset_map = load_asset_map()
-#         enriched_events = []
-#         for event in canonical_events:
-#             resolved_event = resolve_assets(event, asset_map)
-#             enriched_events.append(resolved_event)
-
-#         return jsonify({
-#             "status": "success",
-#             "event_count": len(enriched_events),
-#             "events": enriched_events
-#         })
-
-#     except Exception as e:
-#         return jsonify({"status": "error", "message": str(e)}), 500
-
-
 @app.route('/uploadall', methods=['POST'])
 def upload_all():
     """
@@ -491,6 +403,15 @@ def api_log_generate():
     
     return jsonify(logs)
 
+@app.route('/api/peripherals')
+def api_peripheral_generate():
+    peripheral_logs = analyze_perimeter_logs(LOGS_PATH, str(ASSET_MAP_PATH))
+    
+    peripheral_logs_path = Path('logs/perimeterLogs.json')
+    with open (peripheral_logs_path, 'w', encoding='utf-8') as f:
+        json.dump(peripheral_logs, f, indent=2, ensure_ascii=False)
+        
+    return jsonify(peripheral_logs)
 
 if __name__ == '__main__':
     # For hackathon demo purposes; behind a reverse proxy in "real life"

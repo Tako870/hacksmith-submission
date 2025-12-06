@@ -1,0 +1,102 @@
+{
+  "incident_id": "INC-20250115-1422",
+  "summary": "Credential theft and lateral movement attempt detected via suspicious PowerShell/cmd.exe process access and database connection from engineer workstation",
+  "severity": "critical",
+  "detected_at": "2025-01-15T14:22:08.316Z",
+  "primary_compromised": [
+    "172.16.34.21"
+  ],
+  "affected_hosts": [
+    {
+      "ip": "172.16.34.6",
+      "status": "at_risk",
+      "risk_level": "critical",
+      "risk_of_subsequent_compromise": "critical",
+      "reason": "Direct SQL Server connection from compromised workstation using admin credentials",
+      "likely_vectors": [
+        "credential_theft",
+        "lateral_movement"
+      ],
+      "affected_ports": [
+        1433
+      ],
+      "tags": [
+        "database",
+        "critical_asset"
+      ]
+    },
+    {
+      "ip": "172.16.34.5",
+      "status": "at_risk",
+      "risk_level": "high",
+      "risk_of_subsequent_compromise": "high",
+      "reason": "Admin group membership (IT Server Admins) grants access to web server",
+      "likely_vectors": [
+        "admin_reuse",
+        "rdp"
+      ],
+      "affected_ports": [
+        80,
+        443,
+        3389
+      ],
+      "tags": [
+        "web_server",
+        "high_value"
+      ]
+    },
+    {
+      "ip": "172.16.34.7",
+      "status": "at_risk",
+      "risk_level": "high",
+      "risk_of_subsequent_compromise": "medium_high",
+      "reason": "Admin group membership grants access to application server",
+      "likely_vectors": [
+        "admin_reuse",
+        "rdp"
+      ],
+      "affected_ports": [
+        8080,
+        3389
+      ],
+      "tags": [
+        "app_server",
+        "high_value"
+      ]
+    },
+    {
+      "ip": "172.16.34.11",
+      "status": "at_risk",
+      "risk_level": "medium",
+      "risk_of_subsequent_compromise": "medium",
+      "reason": "Shared admin group access to jump host",
+      "likely_vectors": [
+        "admin_reuse"
+      ],
+      "affected_ports": [
+        3389,
+        5985
+      ],
+      "tags": [
+        "jump_host"
+      ]
+    },
+    {
+      "ip": "172.16.34.10",
+      "status": "at_risk",
+      "risk_level": "medium",
+      "risk_of_subsequent_compromise": "low",
+      "reason": "Potential domain admin access via compromised credentials",
+      "likely_vectors": [
+        "credential_theft"
+      ],
+      "affected_ports": [
+        389,
+        445
+      ],
+      "tags": [
+        "domain_controller"
+      ]
+    }
+  ]
+}
