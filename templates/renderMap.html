@@ -1,150 +1,271 @@
-{% extends 'base.html' %}
-
-{% block title %}Map of Asset Network{% endblock %}
-
-{% block header %}
+{% extends 'base.html' %} {% block title %}Map of Asset Network{% endblock %} {%
+block header %}
 <h1>Map of Asset Network</h1>
-{% endblock %}
+{% endblock %} {% block content %}
 
-{% block content %}
+<p>
+	This page will display a visual representation of the asset network based on
+	the uploaded JSON map.
+</p>
 
-<p>This page will display a visual representation of the asset network based on the uploaded JSON map.</p>
+<div id="map-container" style="display: flex; gap: 16px; margin-top: 20px">
+	<!-- Graph container -->
+	<div
+		id="network"
+		style="
+			flex: 3;
+			height: 75vh;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			position: relative;
+		"
+	>
+		<!-- Legend overlay -->
+		<div
+			id="legend"
+			style="
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				padding: 10px;
+				background: rgba(255, 255, 255, 0.85);
+				border-radius: 6px;
+				font-size: 0.8rem;
+				border: 1px solid #bbb;
+			"
+		>
+			<strong>Edge Legend</strong><br /><br />
 
-<div id="map-container" style="display: flex; gap: 16px; margin-top: 20px;">
+			<div>
+				<span
+					style="
+						display: inline-block;
+						width: 14px;
+						height: 4px;
+						background: #ef4444;
+						margin-right: 6px;
+					"
+				></span
+				>dmz_exposed
+			</div>
+			<div>
+				<span
+					style="
+						display: inline-block;
+						width: 14px;
+						height: 4px;
+						background: #3b82f6;
+						margin-right: 6px;
+					"
+				></span
+				>app_backend
+			</div>
+			<div>
+				<span
+					style="
+						display: inline-block;
+						width: 14px;
+						height: 4px;
+						background: #10b981;
+						margin-right: 6px;
+					"
+				></span
+				>db_backend
+			</div>
+			<div>
+				<span
+					style="
+						display: inline-block;
+						width: 14px;
+						height: 4px;
+						background: #f59e0b;
+						margin-right: 6px;
+					"
+				></span
+				>admin_on
+			</div>
+			<div>
+				<span
+					style="
+						display: inline-block;
+						width: 14px;
+						height: 4px;
+						background: #6366f1;
+						margin-right: 6px;
+					"
+				></span
+				>local_admin_on
+			</div>
+			<div>
+				<span
+					style="
+						display: inline-block;
+						width: 14px;
+						height: 4px;
+						background: #8b5cf6;
+						margin-right: 6px;
+					"
+				></span
+				>member_of
+			</div>
+			<div>
+				<span
+					style="
+						display: inline-block;
+						width: 14px;
+						height: 4px;
+						background: #14b8a6;
+						margin-right: 6px;
+					"
+				></span
+				>interactive_logon
+			</div>
+			<div>
+				<span
+					style="
+						display: inline-block;
+						width: 14px;
+						height: 4px;
+						background: #f43f5e;
+						margin-right: 6px;
+					"
+				></span
+				>data_access
+			</div>
 
-  <!-- Graph container -->
-  <div id="network"
-       style="flex: 3; height: 75vh; border: 1px solid #ccc; border-radius: 6px; position: relative;">
-    
-    <!-- Legend overlay -->
-    <div id="legend"
-         style="position: absolute; top: 10px; left: 10px; 
-                padding: 10px; background: rgba(255,255,255,0.85);
-                border-radius: 6px; font-size: 0.8rem; border: 1px solid #bbb;">
-      <strong>Edge Legend</strong><br><br>
+			<div style="margin-top: 6px; font-size: 0.7rem; color: #444">
+				(Graph draws colored edges without labels)
+			</div>
+		</div>
+	</div>
 
-      <div><span style="display:inline-block;width:14px;height:4px;background:#ef4444;margin-right:6px;"></span>dmz_exposed</div>
-      <div><span style="display:inline-block;width:14px;height:4px;background:#3b82f6;margin-right:6px;"></span>app_backend</div>
-      <div><span style="display:inline-block;width:14px;height:4px;background:#10b981;margin-right:6px;"></span>db_backend</div>
-      <div><span style="display:inline-block;width:14px;height:4px;background:#f59e0b;margin-right:6px;"></span>admin_on</div>
-      <div><span style="display:inline-block;width:14px;height:4px;background:#6366f1;margin-right:6px;"></span>local_admin_on</div>
-      <div><span style="display:inline-block;width:14px;height:4px;background:#8b5cf6;margin-right:6px;"></span>member_of</div>
-      <div><span style="display:inline-block;width:14px;height:4px;background:#14b8a6;margin-right:6px;"></span>interactive_logon</div>
-      <div><span style="display:inline-block;width:14px;height:4px;background:#f43f5e;margin-right:6px;"></span>data_access</div>
-
-      <div style="margin-top:6px;font-size:0.7rem;color:#444;">(Graph draws colored edges without labels)</div>
-    </div>
-
-  </div>
-
-  <!-- Info box -->
-  <div id="node-info"
-       style="flex: 1; height: 75vh; border: 1px solid #ccc; border-radius: 6px;
-              padding: 12px; font-size: 0.9rem; overflow-y: auto; background: #f9fafb;">
-    <h3 style="margin-top: 0;">Node Info</h3>
-    <p>Click a node in the graph to pin its details here.</p>
-    <ul>
-      <li><strong>Type:</strong> –</li>
-      <li><strong>Name:</strong> –</li>
-      <li><strong>IP / Account:</strong> –</li>
-      <li><strong>Zone / Department:</strong> –</li>
-      <li><strong>Criticality:</strong> –</li>
-      <li><strong>Dummy Owner:</strong> –</li>
-      <li><strong>Dummy Risk:</strong> –</li>
-    </ul>
-  </div>
-
+	<!-- Info box -->
+	<div
+		id="node-info"
+		style="
+			flex: 1;
+			height: 75vh;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			padding: 12px;
+			font-size: 0.9rem;
+			overflow-y: auto;
+			background: #f9fafb;
+		"
+	>
+		<h3 style="margin-top: 0">Node Info</h3>
+		<p>Click a node in the graph to pin its details here.</p>
+		<ul>
+			<li><strong>Type:</strong> –</li>
+			<li><strong>Name:</strong> –</li>
+			<li><strong>IP / Account:</strong> –</li>
+			<li><strong>Zone / Department:</strong> –</li>
+			<li><strong>Criticality:</strong> –</li>
+			<li><strong>Dummy Owner:</strong> –</li>
+			<li><strong>Dummy Risk:</strong> –</li>
+		</ul>
+	</div>
 </div>
 
 <!-- vis-network CDN -->
 <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 
 <script>
-fetch("/api/assetmap")
-  .then(res => res.json())
-  .then(graph => {
+	fetch("/api/assetmap")
+		.then((res) => res.json())
+		.then((graph) => {
+			// ===== Edge color dictionary =====
+			const edgeColors = {
+				dmz_exposed: "#ef4444",
+				app_backend: "#3b82f6",
+				db_backend: "#10b981",
+				admin_on: "#f59e0b",
+				local_admin_on: "#6366f1",
+				member_of: "#8b5cf6",
+				interactive_logon: "#14b8a6",
+				data_access: "#f43f5e",
+			};
 
-    // ===== Edge color dictionary =====
-    const edgeColors = {
-      "dmz_exposed": "#ef4444",
-      "app_backend": "#3b82f6",
-      "db_backend": "#10b981",
-      "admin_on": "#f59e0b",
-      "local_admin_on": "#6366f1",
-      "member_of": "#8b5cf6",
-      "interactive_logon": "#14b8a6",
-      "data_access": "#f43f5e"
-    };
+			const rawNodes = graph.nodes || [];
+			const rawEdges = graph.edges || [];
 
-    const rawNodes = graph.nodes || [];
-    const rawEdges = graph.edges || [];
+			// ===== Build nodes =====
+			const visNodes = rawNodes.map((n) => {
+				let color = "#60a5fa";
+				let shape = "dot";
+				let size = 18;
 
-    // ===== Build nodes =====
-    const visNodes = rawNodes.map(n => {
-      let color = "#60a5fa";
-      let shape = "dot";
-      let size = 18;
+				if (n.type === "user") {
+					color = "#f59e0b";
+					shape = "diamond";
+					size = 16;
+				} else if (n.type === "group") {
+					color = "#10b981";
+					shape = "hexagon";
+					size = 20;
+				}
 
-      if (n.type === "user") { color = "#f59e0b"; shape = "diamond"; size = 16; }
-      else if (n.type === "group") { color = "#10b981"; shape = "hexagon"; size = 20; }
+				let label = n.name || n.id;
+				if (n.type === "host" && n.ip) label += "\\n" + n.ip;
+				if (n.type === "user" && n.sam_account_name)
+					label += "\\n(" + n.sam_account_name + ")";
 
-      let label = n.name || n.id;
-      if (n.type === "host" && n.ip) label += "\\n" + n.ip;
-      if (n.type === "user" && n.sam_account_name) label += "\\n(" + n.sam_account_name + ")";
+				return {
+					id: n.id,
+					label,
+					color: { background: color, border: "#222" },
+					shape,
+					size,
+					font: { color: "#333", size: 12, multi: true },
+					raw: n,
+				};
+			});
 
-      return {
-        id: n.id,
-        label,
-        color: { background: color, border: "#222" },
-        shape,
-        size,
-        font: { color: "#333", size: 12, multi: true },
-        raw: n
-      };
-    });
+			// ===== Build edges (NO LABELS, ONLY COLORED) =====
+			const visEdges = rawEdges.map((e, idx) => ({
+				id: "e-" + idx,
+				from: e.source,
+				to: e.target,
+				arrows: "to",
+				color: {
+					color: edgeColors[e.relation] || "#999",
+					highlight: edgeColors[e.relation] || "#999",
+					inherit: false,
+				},
+				width: 2,
+				smooth: { type: "dynamic" },
+			}));
 
-    // ===== Build edges (NO LABELS, ONLY COLORED) =====
-    const visEdges = rawEdges.map((e, idx) => ({
-      id: "e-" + idx,
-      from: e.source,
-      to: e.target,
-      arrows: "to",
-      color: {
-        color: edgeColors[e.relation] || "#999",
-        highlight: edgeColors[e.relation] || "#999",
-        inherit: false
-      },
-      width: 2,
-      smooth: { type: "dynamic" }
-    }));
+			const container = document.getElementById("network");
+			const data = {
+				nodes: new vis.DataSet(visNodes),
+				edges: new vis.DataSet(visEdges),
+			};
 
-    const container = document.getElementById("network");
-    const data = {
-      nodes: new vis.DataSet(visNodes),
-      edges: new vis.DataSet(visEdges)
-    };
+			const options = {
+				interaction: {
+					hover: true,
+					navigationButtons: true,
+					keyboard: true,
+				},
+				physics: {
+					stabilization: true,
+					barnesHut: {
+						gravitationalConstant: -3000,
+						springLength: 150,
+					},
+				},
+			};
 
-    const options = {
-      interaction: {
-        hover: true,
-        navigationButtons: true,
-        keyboard: true
-      },
-      physics: {
-        stabilization: true,
-        barnesHut: { gravitationalConstant: -3000, springLength: 150 }
-      }
-    };
+			const network = new vis.Network(container, data, options);
 
-    const network = new vis.Network(container, data, options);
+			// ===== Node info box =====
+			const infoBox = document.getElementById("node-info");
+			let selectedNodeId = null;
 
-    // ===== Node info box =====
-    const infoBox = document.getElementById("node-info");
-    let selectedNodeId = null;
-
-    function renderInfo(node) {
-      if (!node) {
-        infoBox.innerHTML = `
+			function renderInfo(node) {
+				if (!node) {
+					infoBox.innerHTML = `
           <h3>Node Info</h3>
           <p>Click a node in the graph to pin its details here.</p>
           <ul>
@@ -157,38 +278,40 @@ fetch("/api/assetmap")
             <li><strong>Dummy Risk:</strong> –</li>
           </ul>
         `;
-        return;
-      }
+					return;
+				}
 
-      const n = node.raw;
-      const type = n.type || "unknown";
-      const name = n.name || node.id;
-      const ipOrAcct = n.ip || n.sam_account_name || "N/A";
+				const n = node.raw;
+				const type = n.type || "unknown";
+				const name = n.name || node.id;
+				const ipOrAcct = n.ip || n.sam_account_name || "N/A";
 
-      infoBox.innerHTML = `
+				infoBox.innerHTML = `
         <h3>Node Info</h3>
         <ul>
           <li><strong>Type:</strong> ${type}</li>
           <li><strong>Name:</strong> ${name}</li>
           <li><strong>IP / Account:</strong> ${ipOrAcct}</li>
-          <li><strong>Zone / Department:</strong> ${n.zone || n.department || "N/A"}</li>
+          <li><strong>Zone / Department:</strong> ${
+				n.zone || n.department || "N/A"
+			}</li>
           <li><strong>Criticality:</strong> ${n.criticality || "N/A"}</li>
           <li><strong>Dummy Owner:</strong> Infra Team Alpha</li>
           <li><strong>Dummy Risk:</strong> Modelled risk placeholder</li>
         </ul>
       `;
-    }
+			}
 
-    // ===== CLICK selects node =====
-    network.on("click", params => {
-      if (params.nodes.length > 0) {
-        const nodeId = params.nodes[0];
-        const node = visNodes.find(n => n.id === nodeId);
-        selectedNodeId = nodeId;
-        renderInfo(node);
-      }
-    });
-  });
+			// ===== CLICK selects node =====
+			network.on("click", (params) => {
+				if (params.nodes.length > 0) {
+					const nodeId = params.nodes[0];
+					const node = visNodes.find((n) => n.id === nodeId);
+					selectedNodeId = nodeId;
+					renderInfo(node);
+				}
+			});
+		});
 </script>
 
 {% endblock %}

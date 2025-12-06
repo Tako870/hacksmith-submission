@@ -1,15 +1,19 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for, flash
 from pathlib import Path
 import json
+import os
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from qwenAPI2 import analyze_sysmon_logs
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SecretKey")
+HF_Key = os.getenv("HF_Key")
 
 # Path to your asset map JSON file
 # Use the JSON structure I sent earlier as asset_map_with_identities.json
-ASSET_MAP_PATH = Path("assetMap.json")
-
+ASSET_MAP_PATH = Path("assetmaps/assetMap.json")
+LOGS_PATH = "logs/logs.xml"
 
 def load_asset_map():
     """
@@ -28,7 +32,6 @@ def load_asset_map():
     with ASSET_MAP_PATH.open("r", encoding="utf-8") as f:
         return json.load(f)
 
-
 def save_asset_map(graph: dict):
     """
     Optional: allow overwriting the asset map via upload,
@@ -36,7 +39,6 @@ def save_asset_map(graph: dict):
     """
     with ASSET_MAP_PATH.open("w", encoding="utf-8") as f:
         json.dump(graph, f, indent=2)
-
 
 # ============================================================================
 # LOG INGESTION & PARSING
@@ -153,7 +155,6 @@ def parse_sysmon_xml(xml_content):
 
     return canonical_events
 
-
 def resolve_assets(event, asset_map):
     """
     Resolve src/dst IPs and hostnames to asset IDs using the provided CMDB.
@@ -200,99 +201,97 @@ def resolve_assets(event, asset_map):
 
     return event
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# @app.route('/uploadlogs', methods=['GET', 'POST'])
+# def upload_logs():
+#     """
+#     GET: show a simple form to upload security logs (XML, JSON, etc).
+#     POST: accept a log file, parse it to canonical events, resolve assets,
+#           and return the enriched events for visualization.
+#     """
+#     if request.method == 'POST':
+#         log_file = request.files.get('log_file')
+#         if not log_file:
+#             flash("No log file uploaded", "error")
+#             return redirect(url_for('upload_logs'))
 
-@app.route('/uploadlogs', methods=['GET', 'POST'])
-def upload_logs():
-    """
-    GET: show a simple form to upload security logs (XML, JSON, etc).
-    POST: accept a log file, parse it to canonical events, resolve assets,
-          and return the enriched events for visualization.
-    """
-    if request.method == 'POST':
-        log_file = request.files.get('log_file')
-        if not log_file:
-            flash("No log file uploaded", "error")
-            return redirect(url_for('upload_logs'))
-
-        try:
-            # Read file content
-            content = log_file.read()
+#         try:
+#             # Read file content
+#             content = log_file.read()
             
-            # Try to parse as XML (Sysmon format)
-            if log_file.filename.endswith('.xml'):
-                try:
-                    canonical_events = parse_sysmon_xml(content)
-                except ValueError as e:
-                    flash(f"Failed to parse XML: {str(e)}", "error")
-                    return redirect(url_for('upload_logs'))
-            else:
-                flash("Unsupported file format. Please upload a .xml Sysmon log file.", "error")
-                return redirect(url_for('upload_logs'))
+#             # Try to parse as XML (Sysmon format)
+#             if log_file.filename.endswith('.xml'):
+#                 try:
+#                     canonical_events = parse_sysmon_xml(content)
+#                 except ValueError as e:
+#                     flash(f"Failed to parse XML: {str(e)}", "error")
+#                     return redirect(url_for('upload_logs'))
+#             else:
+#                 flash("Unsupported file format. Please upload a .xml Sysmon log file.", "error")
+#                 return redirect(url_for('upload_logs'))
 
-            # Load asset map for resolution
-            asset_map = load_asset_map()
+#             # Load asset map for resolution
+#             asset_map = load_asset_map()
             
-            # Resolve assets for all events
-            enriched_events = []
-            for event in canonical_events:
-                resolved_event = resolve_assets(event, asset_map)
-                enriched_events.append(resolved_event)
+#             # Resolve assets for all events
+#             enriched_events = []
+#             for event in canonical_events:
+#                 resolved_event = resolve_assets(event, asset_map)
+#                 enriched_events.append(resolved_event)
 
-            # Return enriched events as JSON
-            return jsonify({
-                "status": "success",
-                "event_count": len(enriched_events),
-                "events": enriched_events
-            })
+#             # Return enriched events as JSON
+#             return jsonify({
+#                 "status": "success",
+#                 "event_count": len(enriched_events),
+#                 "events": enriched_events
+#             })
 
-        except Exception as e:
-            flash(f"Error processing log file: {str(e)}", "error")
-            return redirect(url_for('upload_logs'))
+#         except Exception as e:
+#             flash(f"Error processing log file: {str(e)}", "error")
+#             return redirect(url_for('upload_logs'))
 
-    # For GET: show upload form
-    return render_template('uploadLogs.html')
+#     # For GET: show upload form
+#     return render_template('uploadLogs.html')
 
 
-@app.route('/api/uploadlogs', methods=['POST'])
-def api_upload_logs():
-    """
-    API endpoint for uploading logs and getting back canonical + asset-resolved events.
-    Accepts multipart/form-data with 'log_file' field.
-    Returns JSON with parsed events.
-    """
-    log_file = request.files.get('log_file')
-    if not log_file:
-        return jsonify({"status": "error", "message": "No log file uploaded"}), 400
+# @app.route('/api/uploadlogs', methods=['POST'])
+# def api_upload_logs():
+#     """
+#     API endpoint for uploading logs and getting back canonical + asset-resolved events.
+#     Accepts multipart/form-data with 'log_file' field.
+#     Returns JSON with parsed events.
+#     """
+#     log_file = request.files.get('log_file')
+#     if not log_file:
+#         return jsonify({"status": "error", "message": "No log file uploaded"}), 400
 
-    try:
-        content = log_file.read()
+#     try:
+#         content = log_file.read()
         
-        # Detect format by file extension
-        if log_file.filename.endswith('.xml'):
-            canonical_events = parse_sysmon_xml(content)
-        else:
-            return jsonify({"status": "error", "message": "Unsupported file format. Use .xml"}), 400
+#         # Detect format by file extension
+#         if log_file.filename.endswith('.xml'):
+#             canonical_events = parse_sysmon_xml(content)
+#         else:
+#             return jsonify({"status": "error", "message": "Unsupported file format. Use .xml"}), 400
 
-        # Load asset map and resolve
-        asset_map = load_asset_map()
-        enriched_events = []
-        for event in canonical_events:
-            resolved_event = resolve_assets(event, asset_map)
-            enriched_events.append(resolved_event)
+#         # Load asset map and resolve
+#         asset_map = load_asset_map()
+#         enriched_events = []
+#         for event in canonical_events:
+#             resolved_event = resolve_assets(event, asset_map)
+#             enriched_events.append(resolved_event)
 
-        return jsonify({
-            "status": "success",
-            "event_count": len(enriched_events),
-            "events": enriched_events
-        })
+#         return jsonify({
+#             "status": "success",
+#             "event_count": len(enriched_events),
+#             "events": enriched_events
+#         })
 
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
+#     except Exception as e:
+#         return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @app.route('/uploadall', methods=['POST'])
@@ -326,11 +325,18 @@ def upload_all():
     try:
         content = log_file.read()
         if log_file.filename.endswith('.xml'):
+            # Save the uploaded log file to LOGS_PATH
+            logs_path = Path(LOGS_PATH)
+            logs_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(logs_path, 'wb') as f:
+                f.write(content)
+            
             canonical_events = parse_sysmon_xml(content)
         else:
             flash("Unsupported log format. Please upload .xml Sysmon logs.", "error")
             return redirect(url_for('index'))
 
+        
         # Resolve against current asset map
         asset_map = load_asset_map()
         enriched_events = [resolve_assets(e, asset_map) for e in canonical_events]
@@ -341,6 +347,7 @@ def upload_all():
     except Exception as e:
         flash(f"Error processing log file: {str(e)}", "error")
         return redirect(url_for('index'))
+
 @app.route('/uploadmap', methods=['GET', 'POST'])
 def upload_asset_map():
     """
@@ -370,7 +377,6 @@ def upload_asset_map():
     # For GET
     return render_template('uploadMap.html')
 
-
 @app.route('/rendermap')
 def render_map():
     """
@@ -399,7 +405,6 @@ def render_map():
         group_nodes=group_nodes
     )
 
-
 @app.route('/api/assetmap')
 def api_asset_map():
     """
@@ -408,6 +413,19 @@ def api_asset_map():
     """
     graph = load_asset_map()
     return jsonify(graph)
+
+@app.route('/api/logs')
+def api_log_generate():
+    # API to get JSON of the filtered logs from AI
+    
+    logs = analyze_sysmon_logs(LOGS_PATH, HF_Key)
+    
+    # Save the filtered logs to a JSON file
+    filtered_logs_path = Path("logs/filteredLogs.json")
+    with open(filtered_logs_path, 'w', encoding='utf-8') as f:
+        json.dump(logs, f, indent=2, ensure_ascii=False)
+    
+    return jsonify(logs)
 
 
 if __name__ == '__main__':

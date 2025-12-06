@@ -1,0 +1,34 @@
+{
+  "incident_id": "INC-2023-001",
+  "summary": "Malicious PowerShell activity detected with lateral movement to database host",
+  "severity": "critical",
+  "detected_at": "2023-04-15T10:21:34Z",
+  "affected_hosts": [
+    {
+      "ip": "172.16.34.21",
+      "status": "compromised",
+      "risk_level": "critical",
+      "reason": "PowerShell spawned cmd.exe with full privileges and initiated connection to database host",
+      "affected_ports": [
+        1433
+      ],
+      "tags": [
+        "malicious_process",
+        "lateral_movement"
+      ]
+    },
+    {
+      "ip": "172.16.34.6",
+      "status": "at_risk",
+      "risk_level": "high",
+      "reason": "Received suspicious connection from compromised host on MSSQL port",
+      "affected_ports": [
+        1433
+      ],
+      "tags": [
+        "data_exposure_risk",
+        "dependency_impact"
+      ]
+    }
+  ]
+}

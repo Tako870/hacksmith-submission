@@ -1,56 +1,91 @@
-{% extends 'base.html' %}
-
-{% block header %}
+{% extends 'base.html' %} {% block header %}
 <h1>Hacksmith Submission Portal</h1>
-{% endblock %}
-
-{% block title %}Hacksmith Submission Portal{% endblock %}
-
-{% block content %}
+{% endblock %} {% block title %}Hacksmith Submission Portal{% endblock %} {%
+block content %}
 <div class="container mt-3">
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+	<!-- Flash messages -->
+	{% with messages = get_flashed_messages(with_categories=true) %} {% if
+	messages %} {% for category, message in messages %}
+	<div
+		class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show"
+		role="alert"
+	>
+		{{ message }}
+		<button
+			type="button"
+			class="btn-close"
+			data-bs-dismiss="alert"
+			aria-label="Close"
+		></button>
+	</div>
+	{% endfor %} {% endif %} {% endwith %}
 
-    <div class="row">
-        <div class="col-12">
-            <p class="lead">Upload your asset map and incident logs from a single page. Expand a panel to upload, both uploads can be used together to build incident graphs.</p>
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-12">
+			<p class="lead">
+				Upload your asset map and incident logs from a single page.
+				Expand a panel to upload, both uploads can be used together to
+				build incident graphs.
+			</p>
+		</div>
+	</div>
 
-    <div class="row mt-3">
-        <div class="col-md-10 offset-md-1">
-            <div class="card p-3">
-                <form method="POST" action="{{ url_for('upload_all') }}" enctype="multipart/form-data">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-6">
-                            <label for="asset_map" class="form-label">Asset Map (JSON)</label>
-                            <input type="file" class="form-control" id="asset_map" name="asset_map" accept=".json,application/json">
-                            <div class="form-text">Optional: upload or replace the asset map. If omitted, existing map will be used.</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="log_file" class="form-label">Sysmon XML Log</label>
-                            <input type="file" class="form-control" id="log_file" name="log_file" accept=".xml,text/xml,application/xml" required>
-                            <div class="form-text">Required: Windows Sysmon XML event log (.xml)</div>
-                        </div>
+	<div class="row mt-3">
+		<div class="col-md-10 offset-md-1">
+			<div class="card p-3">
+				<form
+					method="POST"
+					action="{{ url_for('upload_all') }}"
+					enctype="multipart/form-data"
+				>
+					<div class="row g-3 align-items-end">
+						<div class="col-md-6">
+							<label for="asset_map" class="form-label"
+								>Asset Map (JSON)</label
+							>
+							<input
+								type="file"
+								class="form-control"
+								id="asset_map"
+								name="asset_map"
+								accept=".json,application/json"
+							/>
+							<div class="form-text">
+								Optional: upload or replace the asset map. If
+								omitted, existing map will be used.
+							</div>
+						</div>
+						<div class="col-md-6">
+							<label for="log_file" class="form-label"
+								>Sysmon XML Log</label
+							>
+							<input
+								type="file"
+								class="form-control"
+								id="log_file"
+								name="log_file"
+								accept=".xml,text/xml,application/xml"
+								required
+							/>
+							<div class="form-text">
+								Required: Windows Sysmon XML event log (.xml)
+							</div>
+						</div>
 
-                        <div class="col-12 mt-2">
-                            <button type="submit" class="btn btn-primary">Upload Map & Logs</button>
-                            <a href="{{ url_for('render_map') }}" class="btn btn-secondary ms-2">View Asset Map</a>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
+						<div class="col-12 mt-2">
+							<button type="submit" class="btn btn-primary">
+								Upload Map & Logs
+							</button>
+							<a
+								href="{{ url_for('render_map') }}"
+								class="btn btn-secondary ms-2"
+								>View Asset Map</a
+							>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
 </div>
 {% endblock %}
