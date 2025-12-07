@@ -208,10 +208,6 @@ See `assetmaps/assetMap.json` for a complete example.
 
 This project was developed for the Hacksmith hackathon. Contributions, issues, and feature requests are welcome.
 
-## License
-
-[Specify your license here]
-
 ## Acknowledgments
 
 - Built with HuggingFace's Qwen3-32B model
