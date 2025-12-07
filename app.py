@@ -390,6 +390,23 @@ def api_asset_map():
     graph = load_asset_map()
     return jsonify(graph)
 
+
+@app.route('/api/perimeter')
+def api_perimeter():
+    """
+    Serve the perimeterLogs.json file so the frontend can highlight peripheral devices.
+    Returns an empty object if the file is not present.
+    """
+    perimeter_path = Path('logs/perimeterLogs.json')
+    if not perimeter_path.exists():
+        return jsonify({})
+    try:
+        with open(perimeter_path, 'r', encoding='utf-8') as fh:
+            data = json.load(fh)
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/api/logs')
 def api_log_generate():
     # API to get JSON of the filtered logs from AI

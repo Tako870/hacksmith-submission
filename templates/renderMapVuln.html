@@ -72,6 +72,10 @@
             <span style="display:inline-block;width:16px;height:12px;background:#fbbf24;border:1px solid #111"></span>
             <span>Medium / At Risk</span>
         </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+            <span style="display:inline-block;width:16px;height:12px;background:#8b5cf6;border:1px solid #4c1d95;border-radius:2px"></span>
+            <span>Peripheral / Perimeter Affected</span>
+        </div>
     </div>
 
     <!-- Info box -->
@@ -170,6 +174,59 @@
 
             const network = new vis.Network(container, data, options);
 
+            // Create an overlay canvas for peripheral decorations (rings, shapes)
+            const overlay = document.createElement('canvas');
+            overlay.id = 'overlay-canvas';
+            overlay.style.position = 'absolute';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.pointerEvents = 'none';
+            overlay.style.zIndex = 5; // below legend (9999) but above vis canvas (1)
+            container.appendChild(overlay);
+
+            // initialize overlay size immediately
+            resizeOverlay();
+
+            function resizeOverlay() {
+                const rect = container.getBoundingClientRect();
+                overlay.width = rect.width * window.devicePixelRatio;
+                overlay.height = rect.height * window.devicePixelRatio;
+                overlay.style.width = rect.width + 'px';
+                overlay.style.height = rect.height + 'px';
+                const ctx = overlay.getContext('2d');
+                ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+            }
+
+            // peripheral node ids
+            let peripheralNodeIds = new Set();
+
+            function drawPeripherals() {
+                const ctx = overlay.getContext('2d');
+                if (!ctx) return;
+                // clear
+                ctx.clearRect(0, 0, overlay.width, overlay.height);
+                // debug
+                console.debug('Drawing peripherals, count=', peripheralNodeIds.size);
+                    // Currently we do not draw a glow/halo for peripherals. The nodes
+                    // themselves are colored purple via data node updates. Keep the
+                    // overlay canvas present but clear it to avoid any visible glow.
+                    peripheralNodeIds.forEach((nid) => {
+                        // intentionally no drawing here
+                    });
+                // overlay kept clear intentionally (peripherals are shown via node color)
+            }
+
+            // re-draw on resize and network interactions
+            window.addEventListener('resize', () => { resizeOverlay(); drawPeripherals(); });
+            network.on('resize', () => { resizeOverlay(); drawPeripherals(); });
+            network.on('zoom', () => { drawPeripherals(); });
+            network.on('dragEnd', () => { drawPeripherals(); });
+            // ensure we draw after layout stabilizes
+            network.on('stabilizationIterationsDone', () => { resizeOverlay(); drawPeripherals(); });
+
+
             const infoBox = document.getElementById("node-info");
 
             // Small helper to escape HTML
@@ -229,8 +286,8 @@
                 const n = node.raw;
                 let html = '<h3>Node Info</h3><div style="line-height:1.6">';
                 
-                // Skip 'id' and 'vuln' as we'll handle them separately
-                const skipKeys = ['id', 'vuln'];
+                // Skip keys handled separately
+                const skipKeys = ['id', 'vuln', 'peripheral', 'peripheralData'];
                 
                 for (const [key, value] of Object.entries(n)) {
                     if (skipKeys.includes(key)) continue;
@@ -271,6 +328,24 @@
                 `;
 
                     html += vulnHtml;
+                }
+
+                // If peripheral/perimeter info exists, append it below
+                if (n && n.peripheralData) {
+                    const p = n.peripheralData;
+                    const periphHtml = `
+                    <hr/>
+                    <h4>Perimeter / Peripheral Details</h4>
+                    <ul>
+                        <li><strong>Risk Level:</strong> ${escapeHtml(p.risk_level || p.status || 'unknown')}</li>
+                        <li><strong>Reason:</strong> ${escapeHtml(p.reason || '')}</li>
+                        <li><strong>Tags:</strong> ${escapeHtml((p.tags || []).join(', '))}</li>
+                        <li><strong>Affected Ports:</strong> ${escapeHtml((p.affected_ports || []).join(', '))}</li>
+                        <li><strong>Vectors:</strong> ${escapeHtml((p.likely_vectors || []).join(', '))}</li>
+                    </ul>
+                    `;
+
+                    html += periphHtml;
                 }
                 
                 infoBox.innerHTML = html;
@@ -396,6 +471,64 @@
 
             // Kick off vulnerability application (fire-and-forget)
             applyVulnerabilities();
+
+            // Additionally fetch perimeter logs and mark peripherals
+            async function applyPerimeterDecorations() {
+                try {
+                    const resp = await fetch('/api/perimeter');
+                    if (!resp.ok) return;
+                    const p = await resp.json();
+                    const perips = new Set();
+                    if (p.primary_compromised && Array.isArray(p.primary_compromised)) {
+                        p.primary_compromised.forEach(ip => perips.add(String(ip).trim()));
+                    }
+                    if (p.affected_hosts && Array.isArray(p.affected_hosts)) {
+                        p.affected_hosts.forEach(h => { if (h.ip) perips.add(String(h.ip).trim()); });
+                    }
+
+                    // match ips to node ids using ip on raw node and attach peripheral data
+                    const updates = [];
+                    const matched = [];
+                    visNodes.forEach((n) => {
+                        const r = n.raw || {};
+                        const nodeIp = r.ip && String(r.ip).trim();
+                        if (nodeIp && perips.has(nodeIp)) {
+                            peripheralNodeIds.add(n.id);
+                            n.raw = n.raw || {};
+                            // find the matching affected_host entry
+                            const match = (p.affected_hosts || []).find(h => String(h.ip).trim() === nodeIp) || null;
+                            if (match) {
+                                n.raw.peripheral = true;
+                                n.raw.peripheralData = match;
+                            } else {
+                                n.raw.peripheral = true;
+                            }
+                            matched.push(n.id);
+                            // Mark the node visually as peripheral by changing its background/border
+                            // to purple and append an exclamation mark to its label (only once).
+                            const currentLabel = n.label || (n.raw && (n.raw.name || n.id)) || n.id;
+                            const hasMark = typeof currentLabel === 'string' && currentLabel.includes('!');
+                            const newLabel = hasMark ? currentLabel : (currentLabel + ' !');
+                            updates.push({ id: n.id, label: newLabel, color: { background: '#8b5cf6', border: '#4c1d95' } });
+                        }
+                    });
+                    if (updates.length) data.nodes.update(updates);
+                    console.debug('Perimeter perips=', Array.from(perips));
+                    console.debug('Matched peripheral node ids=', matched);
+
+                    // schedule a couple of redraws in case vis positions are not ready yet
+                    setTimeout(() => { resizeOverlay(); drawPeripherals(); }, 250);
+                    setTimeout(() => { resizeOverlay(); drawPeripherals(); }, 1000);
+
+                    // ensure overlay sizing and draw
+                    resizeOverlay();
+                    drawPeripherals();
+                } catch (e) {
+                    console.warn('Failed to fetch /api/perimeter', e);
+                }
+            }
+
+            applyPerimeterDecorations();
         });
 </script>
 
