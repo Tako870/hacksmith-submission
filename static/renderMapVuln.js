@@ -429,10 +429,37 @@
 
             // Fetch and display remediation playbook
             async function loadRemediationPlaybook() {
+                // Create loading screen
+                const loadingContainer = document.createElement('div');
+                loadingContainer.id = 'remediation-loading';
+                loadingContainer.style.marginTop = '2rem';
+                loadingContainer.innerHTML = `
+                    <div class="card">
+                        <div class="card-body text-center py-5">
+                            <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h5>Generating Remediation Playbook...</h5>
+                            <p class="text-muted">Analyzing incident data and creating response plan</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Append loading screen after the map container
+                const mapContainer = document.getElementById('map-container');
+                if (mapContainer && mapContainer.parentNode) {
+                    mapContainer.parentNode.insertBefore(loadingContainer, mapContainer.nextSibling);
+                }
+                
                 try {
                     const resp = await fetch('/api/remediation');
                     if (!resp.ok) {
                         console.warn('Failed to fetch remediation playbook');
+                        loadingContainer.innerHTML = `
+                            <div class="alert alert-warning">
+                                <strong>Warning:</strong> Unable to load remediation playbook. Please try again later.
+                            </div>
+                        `;
                         return;
                     }
                     const data = await resp.json();
@@ -440,6 +467,11 @@
                     
                     if (!html) {
                         console.warn('No remediation content available');
+                        loadingContainer.innerHTML = `
+                            <div class="alert alert-info">
+                                <strong>Info:</strong> No remediation content available at this time.
+                            </div>
+                        `;
                         return;
                     }
                     
@@ -447,19 +479,17 @@
                     // Replace \n with empty string, but preserve closing tags
                     html = html.replace(/\\n(?!>)/g, '');
                     
-                    // Create a container for the remediation content
-                    const remediationContainer = document.createElement('div');
-                    remediationContainer.id = 'remediation-playbook';
-                    remediationContainer.style.marginTop = '2rem';
-                    remediationContainer.innerHTML = html;
+                    // Replace loading screen with actual content
+                    loadingContainer.id = 'remediation-playbook';
+                    loadingContainer.innerHTML = html;
                     
-                    // Append after the map container
-                    const mapContainer = document.getElementById('map-container');
-                    if (mapContainer && mapContainer.parentNode) {
-                        mapContainer.parentNode.insertBefore(remediationContainer, mapContainer.nextSibling);
-                    }
                 } catch (e) {
                     console.warn('Error loading remediation playbook:', e);
+                    loadingContainer.innerHTML = `
+                        <div class="alert alert-danger">
+                            <strong>Error:</strong> Failed to load remediation playbook. ${e.message}
+                        </div>
+                    `;
                 }
             }
 
