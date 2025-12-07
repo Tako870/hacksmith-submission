@@ -372,7 +372,7 @@
             // Additionally fetch perimeter logs and mark peripherals
             async function applyPerimeterDecorations() {
                 try {
-                    const resp = await fetch('/api/perimeter');
+                    const resp = await fetch('/api/peripherals');
                     if (!resp.ok) return;
                     const p = await resp.json();
                     const perips = new Set();

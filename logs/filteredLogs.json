@@ -1,33 +1,71 @@
 {
-  "incident_id": "INC-2023-001",
-  "summary": "Malicious PowerShell activity detected on ws-eng-1 with potential lateral movement to db-1 via MSSQL.",
-  "severity": "critical",
-  "detected_at": "2023-04-15T10:21:34Z",
+  "incident_id": "INC-20250115-001",
+  "summary": "Suspicious activity detected on finance workstation fin-ws-2, including persistence mechanisms and direct SQL access. Lateral movement indicators suggest potential compromise.",
+  "severity": "high",
+  "detected_at": "2025-01-15T14:20:45.5000000Z",
   "affected_hosts": [
     {
-      "ip": "172.16.34.21",
-      "status": "compromised",
-      "risk_level": "critical",
-      "reason": "PowerShell (PID 816) spawned cmd.exe with full privileges (0x1fffff) and initiated network connection to db-1:1433.",
+      "ip": "172.16.35.101",
+      "status": "at_risk",
+      "risk_level": "medium",
+      "reason": "Network connection to HR file server",
       "affected_ports": [
-        1433
+        50231
       ],
       "tags": [
-        "malicious_activity",
-        "lateral_movement"
+        "HR"
       ]
     },
     {
-      "ip": "172.16.34.6",
+      "ip": "172.16.35.103",
+      "status": "compromised",
+      "risk_level": "critical",
+      "reason": "Persistence mechanisms and suspicious SQL access detected",
+      "affected_ports": [
+        50321,
+        50337
+      ],
+      "tags": [
+        "Finance",
+        "Persistence",
+        "SQL"
+      ]
+    },
+    {
+      "ip": "172.16.35.20",
+      "status": "at_risk",
+      "risk_level": "low",
+      "reason": "Network connection from HR workstation",
+      "affected_ports": [
+        445
+      ],
+      "tags": [
+        "HR"
+      ]
+    },
+    {
+      "ip": "172.16.35.21",
+      "status": "at_risk",
+      "risk_level": "medium",
+      "reason": "Network connection from finance workstation",
+      "affected_ports": [
+        445
+      ],
+      "tags": [
+        "Finance"
+      ]
+    },
+    {
+      "ip": "172.16.35.41",
       "status": "at_risk",
       "risk_level": "high",
-      "reason": "Received a network connection from compromised host ws-eng-1 on port 1433 (MSSQL), indicating potential data access.",
+      "reason": "Direct SQL access from finance workstation",
       "affected_ports": [
         1433
       ],
       "tags": [
-        "data_access",
-        "dependency_risk"
+        "Finance",
+        "SQL"
       ]
     }
   ]

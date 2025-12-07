@@ -36,7 +36,7 @@ Use real attack reasoning: credential theft, lateral movement, admin credential 
 
 Rules:
 
-Output ONLY a JSON object. First char: {{, last char: }}.
+Output ONLY a JSON object. First char: {open_brace}, last char: {close_brace}.
 
 Use realistic attack chains, for example:
 
@@ -70,25 +70,25 @@ detected_at = the earliest timestamp found in the Sysmon logs, formatted as ISO8
 
 Schema (must match exactly):
 
-{{
+{open_brace} 
 "incident_id": "string",
 "summary": "string",
 "severity": "critical|high|medium|low",
 "detected_at": "ISO8601",
 "primary_compromised": ["IPs"],
 "affected_hosts": [
-{{
-"ip": "string",
-"status": "at_risk",
-"risk_level": "critical|high|medium|low",
-"risk_of_subsequent_compromise": "critical|high|medium_high|medium|low",
-"reason": "string",
-"likely_vectors": ["string"],
-"affected_ports": [number],
-"tags": ["string"]
-}}
+    {open_brace}
+    "ip": "string",
+    "status": "at_risk",
+    "risk_level": "critical|high|medium|low",
+    "risk_of_subsequent_compromise": "critical|high|medium_high|medium|low",
+    "reason": "string",
+    "likely_vectors": ["string"],
+    "affected_ports": [number],
+    "tags": ["string"]
+    {close_brace}
 ]
-}}
+{close_brace}
 
 Reasoning Guidelines:
 
@@ -106,8 +106,6 @@ application/data paths like db_backend, user_fileshare_access, business_app_acce
 
 network perimeter edges like allows_*, dmz_exposed
 
-Identify hosts that are one or two realistic hops away and would be natural next targets.
-
 For each peripheral host, describe why it is at risk in terms of:
 
 which credentials or identities might be stolen,
@@ -119,11 +117,11 @@ what the likely attacker goal would be (e.g., data theft, ransomware spread, ema
 Input:
 
 --- SYSMON LOGS ---
-{{sysmon_logs}}
+{sysmon_logs}
 --- END LOGS ---
 
 --- FULL ASSET MAP (JSON) ---
-{{asset_map_json}}
+{asset_map_json}
 --- END ASSET MAP ---
 
 Now output ONLY the JSON object in the schema above.
@@ -138,12 +136,16 @@ def analyze_perimeter_logs(logpath, assetpath) :
     with open(assetpath, "r", encoding="utf-8") as f:
         asset_map = json.load(f)
 
-    # Format prompt
+    # Format prompt with actual data
     asset_json_str = json.dumps(asset_map, separators=(',', ':'))
     full_prompt = PROMPT.format(
+        open_brace='{',
+        close_brace='}',
         sysmon_logs=sysmon_logs.strip(),
         asset_map_json=asset_json_str
     )
+    
+    print(full_prompt)
 
     # Call model
     client = InferenceClient(model="Qwen/Qwen3-32B", token=HF_Key)

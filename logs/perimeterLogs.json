@@ -1,101 +1,102 @@
 {
-  "incident_id": "INC-20250115-1422",
-  "summary": "Credential theft and lateral movement attempt detected via suspicious PowerShell/cmd.exe process access and database connection from engineer workstation",
+  "incident_id": "INC-20250115-001",
+  "summary": "Compromised finance and HR workstations with lateral movement paths to critical assets",
   "severity": "critical",
-  "detected_at": "2025-01-15T14:22:08.316Z",
+  "detected_at": "2025-01-15T14:20:45.5000000Z",
   "primary_compromised": [
-    "172.16.34.21"
+    "172.16.35.101",
+    "172.16.35.103"
   ],
   "affected_hosts": [
     {
-      "ip": "172.16.34.6",
+      "ip": "172.16.35.41",
       "status": "at_risk",
       "risk_level": "critical",
       "risk_of_subsequent_compromise": "critical",
-      "reason": "Direct SQL Server connection from compromised workstation using admin credentials",
+      "reason": "Direct SQL access from compromised fin-ws-2 (ERIC) with potential for data exfiltration or payroll manipulation",
       "likely_vectors": [
-        "credential_theft",
-        "lateral_movement"
+        "SQL injection via PowerShell",
+        "stolen service account credentials"
       ],
       "affected_ports": [
         1433
       ],
       "tags": [
-        "database",
-        "critical_asset"
-      ]
-    },
-    {
-      "ip": "172.16.34.5",
-      "status": "at_risk",
-      "risk_level": "high",
-      "risk_of_subsequent_compromise": "high",
-      "reason": "Admin group membership (IT Server Admins) grants access to web server",
-      "likely_vectors": [
-        "admin_reuse",
-        "rdp"
-      ],
-      "affected_ports": [
-        80,
-        443,
-        3389
-      ],
-      "tags": [
-        "web_server",
+        "payroll_db",
         "high_value"
       ]
     },
     {
-      "ip": "172.16.34.7",
+      "ip": "172.16.35.21",
       "status": "at_risk",
       "risk_level": "high",
       "risk_of_subsequent_compromise": "medium_high",
-      "reason": "Admin group membership grants access to application server",
+      "reason": "Finance file server accessible via SMB from compromised fin-ws-2 (ERIC) with cached credentials",
       "likely_vectors": [
-        "admin_reuse",
-        "rdp"
+        "SMB lateral movement",
+        "stolen payroll app credentials"
       ],
       "affected_ports": [
-        8080,
-        3389
+        445
       ],
       "tags": [
-        "app_server",
-        "high_value"
+        "payroll_files",
+        "sensitive"
       ]
     },
     {
-      "ip": "172.16.34.11",
+      "ip": "172.16.35.10",
       "status": "at_risk",
-      "risk_level": "medium",
-      "risk_of_subsequent_compromise": "medium",
-      "reason": "Shared admin group access to jump host",
+      "risk_level": "critical",
+      "risk_of_subsequent_compromise": "high",
+      "reason": "HR/Finance domain controller accessible via admin group membership of DIANA (hr-ws-1) with potential for golden ticket attacks",
       "likely_vectors": [
-        "admin_reuse"
-      ],
-      "affected_ports": [
-        3389,
-        5985
-      ],
-      "tags": [
-        "jump_host"
-      ]
-    },
-    {
-      "ip": "172.16.34.10",
-      "status": "at_risk",
-      "risk_level": "medium",
-      "risk_of_subsequent_compromise": "low",
-      "reason": "Potential domain admin access via compromised credentials",
-      "likely_vectors": [
-        "credential_theft"
+        "Kerberos ticket forgery",
+        "DCSync via stolen credentials"
       ],
       "affected_ports": [
         389,
         445
       ],
       "tags": [
-        "domain_controller"
+        "domain_controller",
+        "tier0"
+      ]
+    },
+    {
+      "ip": "172.16.35.20",
+      "status": "at_risk",
+      "risk_level": "high",
+      "risk_of_subsequent_compromise": "medium",
+      "reason": "HR file server accessible via SMB from compromised hr-ws-1 (DIANA) with personnel data exposure risk",
+      "likely_vectors": [
+        "SMB share access",
+        "stolen HR app credentials"
+      ],
+      "affected_ports": [
+        445
+      ],
+      "tags": [
+        "hr_files",
+        "sensitive"
+      ]
+    },
+    {
+      "ip": "172.16.35.40",
+      "status": "at_risk",
+      "risk_level": "high",
+      "risk_of_subsequent_compromise": "medium_high",
+      "reason": "HR database server accessible via HR admin group privileges from compromised hr-ws-1 (DIANA)",
+      "likely_vectors": [
+        "SQL injection",
+        "stolen service account credentials"
+      ],
+      "affected_ports": [
+        1433
+      ],
+      "tags": [
+        "hr_db",
+        "sensitive"
       ]
     }
   ]

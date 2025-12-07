@@ -198,6 +198,8 @@ def remediation_guide_generate(assetpath, peripheralpath, compropath) :
         compromise_summary_json=compro_summary,
         peripheral_summary_json=peripheral_summary
     )
+    
+    print(full_prompt)
 
     # Call model
     client = InferenceClient(model="Qwen/Qwen3-32B", token=HF_Key)

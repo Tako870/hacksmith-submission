@@ -300,35 +300,6 @@ def upload_all():
         flash(f"Error processing log file: {str(e)}", "error")
         return redirect(url_for('index'))
 
-@app.route('/uploadmap', methods=['GET', 'POST'])
-def upload_asset_map():
-    """
-    GET: show a simple form to upload an asset map JSON.
-    POST: accept a JSON file and save it as the current asset map.
-    """
-    if request.method == 'POST':
-        file = request.files.get('asset_map')
-        if not file:
-            flash("No file uploaded", "error")
-            return redirect(url_for('upload_asset_map'))
-
-        try:
-            graph = json.load(file.stream)
-            # Basic sanity check
-            if not isinstance(graph, dict) or "nodes" not in graph or "edges" not in graph:
-                flash("Invalid asset map format (missing 'nodes' or 'edges')", "error")
-                return redirect(url_for('upload_asset_map'))
-
-            save_asset_map(graph)
-            flash("Asset map uploaded successfully", "success")
-            return redirect(url_for('render_map'))
-        except json.JSONDecodeError:
-            flash("Uploaded file is not valid JSON", "error")
-            return redirect(url_for('upload_asset_map'))
-
-    # For GET
-    return render_template('uploadMap.html')
-
 @app.route('/rendermap')
 def render_map():
     """
@@ -393,28 +364,18 @@ def api_asset_map():
     graph = load_asset_map()
     return jsonify(graph)
 
-
-@app.route('/api/perimeter')
-def api_perimeter():
-    """
-    Serve the perimeterLogs.json file so the frontend can highlight peripheral devices.
-    Returns an empty object if the file is not present.
-    """
-
-    if not perimeter_path.exists():
-        return jsonify({})
-    try:
-        with open(perimeter_path, 'r', encoding='utf-8') as fh:
-            data = json.load(fh)
-        return jsonify(data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
 @app.route('/api/logs')
 def api_log_generate():
     # API to get JSON of the filtered logs from AI
-    
-    logs = analyze_sysmon_logs(LOGS_PATH, HF_Key)    
+    # Read log text from logs/logs.xml
+    logs_file = Path(LOGS_PATH)
+    if logs_file.exists():
+        with open(logs_file, 'r', encoding='utf-8') as f:
+            logtext = f.read()
+    else:
+        logtext = ""
+
+    logs = analyze_sysmon_logs(logtext, HF_Key)    
     with open(compro_path, 'w', encoding='utf-8') as f:
         json.dump(logs, f, indent=2, ensure_ascii=False)
     

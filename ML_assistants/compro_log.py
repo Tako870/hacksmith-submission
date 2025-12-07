@@ -58,13 +58,10 @@ def analyze_sysmon_logs(sysmon_xml: str, hf_token: str) -> dict:
     }
 
     Rules (DO NOT OUTPUT THESE):
-    - Use only the IPs and timestamps from the logs.
+    - Use only the IPs and timestamps from the logs. These are in the SourceIp and DestinationIp tags.
     - The earliest event time is the detection time.
-    - Only include hosts that appear in the logs: 172.16.34.21 (ws-eng-1) and 172.16.34.6 (db-1).
-    - PowerShell (PID 816) spawns cmd.exe and accesses it with full privileges (0x1fffff) → strong indicator of malicious activity.
-    - Network connection from 172.16.34.21 to 172.16.34.6:1433 (MSSQL) → potential data access.
-    - All activity runs under CORP\alice with High integrity.
-    - If a host shows process manipulation + outbound DB connection → likely compromised.
+    - Only include hosts that appear in the logs.
+    - THE LOGS ARE IN THE XML BELOW.
 
     Now analyze these logs and output ONLY the JSON:
     '''
@@ -78,7 +75,7 @@ def analyze_sysmon_logs(sysmon_xml: str, hf_token: str) -> dict:
         max_tokens=2000,
         temperature=0.0,  # Use 0.0 for deterministic output
     )
-
+    
     cleaned = extract_json_block(response.choices[0].message.content.strip())
     raw_output = cleaned
     # Attempt to parse JSON

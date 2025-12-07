@@ -39,7 +39,24 @@
           "name": "Windows Firewall",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "internal",
+        "business_owner": "Network Operations",
+        "contains_credentials": [
+          "device_local_admin_hashes"
+        ],
+        "key_dependencies": [],
+        "reachable_zones": [
+          "Perimeter",
+          "DMZ",
+          "Internet"
+        ],
+        "lateral_movement_vectors": [
+          "rdp"
+        ],
+        "blast_radius_hint": "Compromise here can alter routing and expose internal services to the internet."
+      }
     },
     {
       "id": "fw-perim-1",
@@ -71,7 +88,28 @@
           "name": "RemoteAccess",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "internal",
+        "business_owner": "Network Operations",
+        "contains_credentials": [
+          "device_local_admin_hashes",
+          "vpn_pre_shared_keys"
+        ],
+        "key_dependencies": [
+          "edge-router-1"
+        ],
+        "reachable_zones": [
+          "Perimeter",
+          "DMZ",
+          "Server",
+          "HR-FIN-Perimeter"
+        ],
+        "lateral_movement_vectors": [
+          "rdp"
+        ],
+        "blast_radius_hint": "Firewall compromise enables arbitrary access into DMZ, core servers, and HR/Finance subnet."
+      }
     },
     {
       "id": "vpn-gw-1",
@@ -108,7 +146,28 @@
           "name": "IKEEXT",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "internal",
+        "business_owner": "Network Operations",
+        "contains_credentials": [
+          "vpn_client_certs",
+          "shared_secrets"
+        ],
+        "key_dependencies": [
+          "fw-perim-1",
+          "dc-1"
+        ],
+        "reachable_zones": [
+          "Perimeter",
+          "User",
+          "Server"
+        ],
+        "lateral_movement_vectors": [
+          "vpn_tunnels"
+        ],
+        "blast_radius_hint": "Compromised VPN GW can grant direct remote access into user and server networks using stolen VPN profiles."
+      }
     },
     {
       "id": "web-1",
@@ -152,7 +211,32 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "public",
+        "business_owner": "Digital Services",
+        "contains_credentials": [
+          "app_pool_identities",
+          "cached_domain_creds_if_rdp_used"
+        ],
+        "key_dependencies": [
+          "app-1",
+          "db-1",
+          "dc-1",
+          "file-1"
+        ],
+        "reachable_zones": [
+          "Internet",
+          "DMZ",
+          "Server"
+        ],
+        "lateral_movement_vectors": [
+          "web_shell_over_http",
+          "rdp",
+          "smb_to_file_server"
+        ],
+        "blast_radius_hint": "Internet-facing; compromise here is a common entry point and can be used to pivot to app-1 and db-1."
+      }
     },
     {
       "id": "app-1",
@@ -191,7 +275,30 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "sensitive",
+        "business_owner": "Application Team",
+        "contains_credentials": [
+          "db_service_account_creds",
+          "api_tokens_to_internals"
+        ],
+        "key_dependencies": [
+          "db-1",
+          "dc-1",
+          "file-1"
+        ],
+        "reachable_zones": [
+          "DMZ",
+          "Server"
+        ],
+        "lateral_movement_vectors": [
+          "rdp_from_jump_host",
+          "smb_to_file_server",
+          "service_account_impersonation"
+        ],
+        "blast_radius_hint": "Compromise exposes app-layer credentials that can be re-used against db-1 and other internal services."
+      }
     },
     {
       "id": "db-1",
@@ -230,7 +337,32 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "highly_sensitive",
+        "data_types": [
+          "customer_pii",
+          "transaction_history"
+        ],
+        "business_owner": "Data Platform",
+        "contains_credentials": [
+          "db_logins",
+          "linked_server_creds"
+        ],
+        "key_dependencies": [
+          "dc-1",
+          "app-1"
+        ],
+        "reachable_zones": [
+          "Server"
+        ],
+        "lateral_movement_vectors": [
+          "xp_cmdshell_if_enabled",
+          "smb_via_os",
+          "rdp_from_jump"
+        ],
+        "blast_radius_hint": "Direct compromise equals major data breach; any upstream app or admin path to this host should be treated as high-risk."
+      }
     },
     {
       "id": "file-1",
@@ -274,7 +406,31 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "sensitive",
+        "data_types": [
+          "shared_documents",
+          "internal_reports"
+        ],
+        "business_owner": "Infrastructure",
+        "contains_credentials": [
+          "cached_smb_tokens",
+          "offline_files_metadata"
+        ],
+        "key_dependencies": [
+          "dc-1"
+        ],
+        "reachable_zones": [
+          "Server",
+          "User"
+        ],
+        "lateral_movement_vectors": [
+          "smb_admin_shares",
+          "rdp"
+        ],
+        "blast_radius_hint": "Common lateral movement pivot; ransomware on this host impacts many departments at once."
+      }
     },
     {
       "id": "mail-1",
@@ -323,7 +479,33 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "sensitive",
+        "data_types": [
+          "internal_emails",
+          "mailbox_metadata"
+        ],
+        "business_owner": "Messaging",
+        "contains_credentials": [
+          "service_accounts",
+          "oauth_tokens_for_integrations"
+        ],
+        "key_dependencies": [
+          "dc-1"
+        ],
+        "reachable_zones": [
+          "Server",
+          "User",
+          "Internet"
+        ],
+        "lateral_movement_vectors": [
+          "ews_impersonation",
+          "rce_via_mail_exploit",
+          "rdp"
+        ],
+        "blast_radius_hint": "Compromise can be used for internal phishing and data leak of entire mailbox stores."
+      }
     },
     {
       "id": "dc-1",
@@ -397,7 +579,33 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "highly_sensitive",
+        "data_types": [
+          "identity_store",
+          "group_policy"
+        ],
+        "business_owner": "Identity & Access Management",
+        "contains_credentials": [
+          "krbtgt_hash",
+          "service_account_passwords",
+          "cached_logon_data"
+        ],
+        "key_dependencies": [],
+        "reachable_zones": [
+          "Server",
+          "User",
+          "HR-FIN-Server",
+          "HR-FIN-User"
+        ],
+        "lateral_movement_vectors": [
+          "dc_sync",
+          "golden_ticket",
+          "smb_admin_shares"
+        ],
+        "blast_radius_hint": "Tier-0 asset; compromise gives effective control over all domain-joined systems and users."
+      }
     },
     {
       "id": "jump-1",
@@ -431,7 +639,28 @@
           "display_name": "Windows Remote Management",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "sensitive",
+        "business_owner": "Infrastructure",
+        "contains_credentials": [
+          "domain_admin_cached_creds",
+          "server_admin_cached_creds"
+        ],
+        "key_dependencies": [
+          "dc-1"
+        ],
+        "reachable_zones": [
+          "Server",
+          "DMZ",
+          "HR-FIN-Server"
+        ],
+        "lateral_movement_vectors": [
+          "rdp_to_servers",
+          "winrm_remote_commands"
+        ],
+        "blast_radius_hint": "Primary admin pivot; compromise here often equals effective full-domain compromise."
+      }
     },
     {
       "id": "ws-eng-1",
@@ -465,7 +694,36 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "internal",
+        "data_types": [
+          "source_code_checkouts",
+          "engineering_docs"
+        ],
+        "business_owner": "Engineering",
+        "contains_credentials": [
+          "browser_session_tokens",
+          "domain_user_creds_for_ALICE_and_EVE",
+          "ssh_keys_for_repo_if_any"
+        ],
+        "key_dependencies": [
+          "dc-1",
+          "file-1",
+          "web-1"
+        ],
+        "reachable_zones": [
+          "User",
+          "DMZ",
+          "Server"
+        ],
+        "lateral_movement_vectors": [
+          "spearphishing_lateral",
+          "smb_admin_if_misconfigured",
+          "rdp"
+        ],
+        "blast_radius_hint": "Common initial foothold; compromise can be used to reach web-1 and internal file shares, then upward."
+      }
     },
     {
       "id": "ws-fin-1",
@@ -499,7 +757,33 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "sensitive",
+        "data_types": [
+          "financial_reports",
+          "exports_from_payroll_system"
+        ],
+        "business_owner": "Finance",
+        "contains_credentials": [
+          "domain_user_creds_for_CAROL",
+          "payroll_app_creds"
+        ],
+        "key_dependencies": [
+          "fin-app-1",
+          "file-1"
+        ],
+        "reachable_zones": [
+          "User",
+          "Server",
+          "HR-FIN-Server"
+        ],
+        "lateral_movement_vectors": [
+          "macro_malware",
+          "smb_lateral"
+        ],
+        "blast_radius_hint": "Compromise can expose finance data and provide credentials to specialized finance applications."
+      }
     },
     {
       "id": "user-alice",
@@ -508,7 +792,23 @@
       "sam_account_name": "ALICE",
       "upn": "alice@corp.local",
       "department": "Engineering",
-      "privilege_level": "standard"
+      "privilege_level": "standard",
+      "security_profile": {
+        "role": "Senior Engineer",
+        "mfa_enabled": true,
+        "high_value_identity": true,
+        "primary_workstation": "ws-eng-1",
+        "can_access_data_on": [
+          "ws-eng-1",
+          "file-1",
+          "web-1",
+          "app-1"
+        ],
+        "privileged_groups": [
+          "group-it-server-admins"
+        ],
+        "blast_radius_hint": "If ALICE's creds are stolen, attacker gains local admin on key servers plus access to engineering data."
+      }
     },
     {
       "id": "user-bob",
@@ -517,7 +817,24 @@
       "sam_account_name": "BOB",
       "upn": "bob@corp.local",
       "department": "IT",
-      "privilege_level": "high"
+      "privilege_level": "high",
+      "security_profile": {
+        "role": "Infrastructure Engineer",
+        "mfa_enabled": true,
+        "high_value_identity": true,
+        "primary_workstation": "jump-1",
+        "can_access_data_on": [
+          "dc-1",
+          "db-1",
+          "file-1",
+          "mail-1",
+          "jump-1"
+        ],
+        "privileged_groups": [
+          "group-domain-admins"
+        ],
+        "blast_radius_hint": "Domain Admin; compromise of BOB gives direct administrative control over most Tier-0 and Tier-1 assets."
+      }
     },
     {
       "id": "user-carol",
@@ -526,7 +843,23 @@
       "sam_account_name": "CAROL",
       "upn": "carol@corp.local",
       "department": "Finance",
-      "privilege_level": "standard"
+      "privilege_level": "standard",
+      "security_profile": {
+        "role": "Finance Analyst",
+        "mfa_enabled": true,
+        "high_value_identity": true,
+        "primary_workstation": "ws-fin-1",
+        "can_access_data_on": [
+          "ws-fin-1",
+          "file-1",
+          "fin-app-1",
+          "fin-file-1"
+        ],
+        "privileged_groups": [
+          "group-finance-staff"
+        ],
+        "blast_radius_hint": "Credential theft leads to exposure of sensitive financial documents and access to finance applications."
+      }
     },
     {
       "id": "user-eve",
@@ -535,25 +868,68 @@
       "sam_account_name": "EVE",
       "upn": "eve@corp.local",
       "department": "SOC",
-      "privilege_level": "elevated"
+      "privilege_level": "elevated",
+      "security_profile": {
+        "role": "SOC Analyst",
+        "mfa_enabled": true,
+        "high_value_identity": true,
+        "primary_workstation": "ws-eng-1",
+        "can_access_data_on": [
+          "ws-eng-1",
+          "file-1",
+          "siem_platform"
+        ],
+        "privileged_groups": [
+          "group-domain-admins"
+        ],
+        "blast_radius_hint": "Has elevated privileges to investigate incidents; compromise may give attacker blue-team visibility and domain-level reach."
+      }
     },
     {
       "id": "group-domain-admins",
       "type": "group",
       "name": "Domain Admins",
-      "sam_account_name": "Domain Admins"
+      "sam_account_name": "Domain Admins",
+      "security_profile": {
+        "tier": "tier0",
+        "privilege_scope": "domain_wide_admin",
+        "high_value_group": true,
+        "members_include": [
+          "user-bob",
+          "user-eve"
+        ],
+        "blast_radius_hint": "Any member account in this group is effectively a full-domain compromise if abused."
+      }
     },
     {
       "id": "group-it-server-admins",
       "type": "group",
       "name": "IT Server Admins",
-      "sam_account_name": "IT-Server-Admins"
+      "sam_account_name": "IT-Server-Admins",
+      "security_profile": {
+        "tier": "tier1",
+        "privilege_scope": "local_admin_on_key_servers",
+        "high_value_group": true,
+        "members_include": [
+          "user-alice"
+        ],
+        "blast_radius_hint": "Members can control major application and web servers; often used as stepping stone to DB or DC."
+      }
     },
     {
       "id": "group-finance-staff",
       "type": "group",
       "name": "Finance Staff",
-      "sam_account_name": "Finance-Users"
+      "sam_account_name": "Finance-Users",
+      "security_profile": {
+        "tier": "business",
+        "privilege_scope": "data_access_finance",
+        "high_value_group": true,
+        "members_include": [
+          "user-carol"
+        ],
+        "blast_radius_hint": "Compromise of any member yields access to finance shares and business applications."
+      }
     },
     {
       "id": "hr-gw-1",
@@ -585,7 +961,26 @@
           "name": "Windows Firewall",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "internal",
+        "business_owner": "Network Operations",
+        "contains_credentials": [
+          "device_local_admin_hashes"
+        ],
+        "key_dependencies": [
+          "fw-perim-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-Perimeter",
+          "HR-FIN-Server",
+          "HR-FIN-User"
+        ],
+        "lateral_movement_vectors": [
+          "rdp"
+        ],
+        "blast_radius_hint": "Compromise can isolate or expose the HR/Finance subnet, enabling or blocking access in bulk."
+      }
     },
     {
       "id": "hr-fw-1",
@@ -617,7 +1012,26 @@
           "name": "RemoteAccess",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "internal",
+        "business_owner": "Network Operations",
+        "contains_credentials": [
+          "device_local_admin_hashes"
+        ],
+        "key_dependencies": [
+          "hr-gw-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-Perimeter",
+          "HR-FIN-Server",
+          "HR-FIN-User"
+        ],
+        "lateral_movement_vectors": [
+          "rdp"
+        ],
+        "blast_radius_hint": "Firewall compromise here can expose payroll and HR databases/files directly to the core network."
+      }
     },
     {
       "id": "hr-dc-1",
@@ -691,7 +1105,30 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "highly_sensitive",
+        "data_types": [
+          "hr_identity_store",
+          "finance_identity_store"
+        ],
+        "business_owner": "Identity & Access Management",
+        "contains_credentials": [
+          "krbtgt_hash_hr_fin",
+          "service_accounts_for_hr_fin"
+        ],
+        "key_dependencies": [],
+        "reachable_zones": [
+          "HR-FIN-Server",
+          "HR-FIN-User"
+        ],
+        "lateral_movement_vectors": [
+          "dc_sync",
+          "golden_ticket",
+          "smb_admin_shares"
+        ],
+        "blast_radius_hint": "Tier-0 for HR/Finance; full identity compromise of that subnet."
+      }
     },
     {
       "id": "hr-file-1",
@@ -735,7 +1172,30 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "highly_sensitive",
+        "data_types": [
+          "employee_personnel_files",
+          "performance_reviews"
+        ],
+        "business_owner": "HR",
+        "contains_credentials": [
+          "cached_smb_tokens"
+        ],
+        "key_dependencies": [
+          "hr-dc-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-Server",
+          "HR-FIN-User"
+        ],
+        "lateral_movement_vectors": [
+          "smb",
+          "rdp"
+        ],
+        "blast_radius_hint": "Ransomware or exfiltration here equates to HR data breach and high regulatory exposure."
+      }
     },
     {
       "id": "fin-file-1",
@@ -779,7 +1239,33 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "highly_sensitive",
+        "data_types": [
+          "payroll_exports",
+          "bank_details",
+          "salary_data"
+        ],
+        "business_owner": "Finance",
+        "contains_credentials": [
+          "cached_smb_tokens",
+          "batch_job_creds"
+        ],
+        "key_dependencies": [
+          "hr-dc-1",
+          "fin-db-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-Server",
+          "HR-FIN-User"
+        ],
+        "lateral_movement_vectors": [
+          "smb",
+          "rdp"
+        ],
+        "blast_radius_hint": "High-value; compromise leads directly to payroll data breach and potential financial fraud."
+      }
     },
     {
       "id": "hr-app-1",
@@ -813,7 +1299,32 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "highly_sensitive",
+        "data_types": [
+          "employee_profiles",
+          "leave_records"
+        ],
+        "business_owner": "HR",
+        "contains_credentials": [
+          "db_service_account_hr",
+          "api_tokens"
+        ],
+        "key_dependencies": [
+          "hr-db-1",
+          "hr-dc-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-Server",
+          "HR-FIN-User"
+        ],
+        "lateral_movement_vectors": [
+          "app_layer_rce",
+          "rdp_from_admins"
+        ],
+        "blast_radius_hint": "Application-layer breach can be used to read/modify HR data and pivot into HR DB and files."
+      }
     },
     {
       "id": "fin-app-1",
@@ -847,7 +1358,32 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "highly_sensitive",
+        "data_types": [
+          "payroll_records",
+          "tax_documents"
+        ],
+        "business_owner": "Finance",
+        "contains_credentials": [
+          "db_service_account_payroll",
+          "payment_gateway_tokens"
+        ],
+        "key_dependencies": [
+          "fin-db-1",
+          "hr-dc-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-Server",
+          "HR-FIN-User"
+        ],
+        "lateral_movement_vectors": [
+          "app_layer_rce",
+          "rdp_from_admins"
+        ],
+        "blast_radius_hint": "Critical; compromise leads to full payroll DB exposure and potential payment redirection."
+      }
     },
     {
       "id": "hr-db-1",
@@ -886,7 +1422,31 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "highly_sensitive",
+        "data_types": [
+          "employee_pii",
+          "hr_case_notes"
+        ],
+        "business_owner": "HR",
+        "contains_credentials": [
+          "db_logins_hr",
+          "linked_server_creds"
+        ],
+        "key_dependencies": [
+          "hr-dc-1",
+          "hr-app-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-Server"
+        ],
+        "lateral_movement_vectors": [
+          "db_rce",
+          "rdp"
+        ],
+        "blast_radius_hint": "Breach equals HR data compromise and serious compliance impact."
+      }
     },
     {
       "id": "fin-db-1",
@@ -925,7 +1485,31 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "highly_sensitive",
+        "data_types": [
+          "payroll_data",
+          "banking_details"
+        ],
+        "business_owner": "Finance",
+        "contains_credentials": [
+          "db_logins_payroll",
+          "linked_server_creds"
+        ],
+        "key_dependencies": [
+          "hr-dc-1",
+          "fin-app-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-Server"
+        ],
+        "lateral_movement_vectors": [
+          "db_rce",
+          "rdp"
+        ],
+        "blast_radius_hint": "Full compromise equates to catastrophic payroll/bank data exposure."
+      }
     },
     {
       "id": "hr-ws-1",
@@ -959,7 +1543,32 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "sensitive",
+        "data_types": [
+          "hr_docs",
+          "exports_from_hr_app"
+        ],
+        "business_owner": "HR",
+        "contains_credentials": [
+          "domain_user_creds_for_DIANA",
+          "hr_app_creds"
+        ],
+        "key_dependencies": [
+          "hr-app-1",
+          "hr-file-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-User",
+          "HR-FIN-Server"
+        ],
+        "lateral_movement_vectors": [
+          "macro_malware",
+          "smb_lateral"
+        ],
+        "blast_radius_hint": "Entry point into HR data; compromise plus stolen DIANA creds is high risk."
+      }
     },
     {
       "id": "hr-ws-2",
@@ -993,7 +1602,31 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "sensitive",
+        "data_types": [
+          "hr_docs",
+          "employee_lists"
+        ],
+        "business_owner": "HR",
+        "contains_credentials": [
+          "domain_user_creds_for_FRANK"
+        ],
+        "key_dependencies": [
+          "hr-app-1",
+          "hr-file-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-User",
+          "HR-FIN-Server"
+        ],
+        "lateral_movement_vectors": [
+          "macro_malware",
+          "smb_lateral"
+        ],
+        "blast_radius_hint": "Another HR entry point; often similar risk profile to hr-ws-1 but owned by a different user."
+      }
     },
     {
       "id": "fin-ws-2",
@@ -1027,7 +1660,32 @@
           "display_name": "Remote Desktop Services",
           "status": "running"
         }
-      ]
+      ],
+      "security_profile": {
+        "data_classification": "sensitive",
+        "data_types": [
+          "payroll_exports",
+          "financial_spreadsheets"
+        ],
+        "business_owner": "Finance",
+        "contains_credentials": [
+          "domain_user_creds_for_ERIC",
+          "payroll_app_creds"
+        ],
+        "key_dependencies": [
+          "fin-app-1",
+          "fin-file-1"
+        ],
+        "reachable_zones": [
+          "HR-FIN-User",
+          "HR-FIN-Server"
+        ],
+        "lateral_movement_vectors": [
+          "macro_malware",
+          "smb_lateral"
+        ],
+        "blast_radius_hint": "Finance entry point; likely path for attacks targeting payroll and banking data."
+      }
     },
     {
       "id": "user-diana",
@@ -1036,7 +1694,22 @@
       "sam_account_name": "DIANA",
       "upn": "diana@corp.local",
       "department": "HR",
-      "privilege_level": "elevated"
+      "privilege_level": "elevated",
+      "security_profile": {
+        "role": "HR Manager",
+        "mfa_enabled": true,
+        "high_value_identity": true,
+        "primary_workstation": "hr-ws-1",
+        "can_access_data_on": [
+          "hr-app-1",
+          "hr-file-1"
+        ],
+        "privileged_groups": [
+          "group-hr-staff",
+          "group-hr-admins"
+        ],
+        "blast_radius_hint": "Key HR identity; theft of DIANA's creds enables deep manipulation of HR systems and data."
+      }
     },
     {
       "id": "user-eric",
@@ -1045,7 +1718,22 @@
       "sam_account_name": "ERIC",
       "upn": "eric@corp.local",
       "department": "Finance",
-      "privilege_level": "standard"
+      "privilege_level": "standard",
+      "security_profile": {
+        "role": "Payroll Specialist",
+        "mfa_enabled": true,
+        "high_value_identity": true,
+        "primary_workstation": "fin-ws-2",
+        "can_access_data_on": [
+          "fin-app-1",
+          "fin-file-1",
+          "fin-db-1"
+        ],
+        "privileged_groups": [
+          "group-payroll-staff"
+        ],
+        "blast_radius_hint": "Payroll-focused identity; compromise is a direct route to payroll and bank data manipulation."
+      }
     },
     {
       "id": "user-frank",
@@ -1054,25 +1742,67 @@
       "sam_account_name": "FRANK",
       "upn": "frank@corp.local",
       "department": "HR",
-      "privilege_level": "standard"
+      "privilege_level": "standard",
+      "security_profile": {
+        "role": "HR Officer",
+        "mfa_enabled": true,
+        "high_value_identity": false,
+        "primary_workstation": "hr-ws-2",
+        "can_access_data_on": [
+          "hr-app-1",
+          "hr-file-1"
+        ],
+        "privileged_groups": [
+          "group-hr-staff"
+        ],
+        "blast_radius_hint": "Standard HR identity; still sensitive due to HR data access, but less powerful than DIANA."
+      }
     },
     {
       "id": "group-hr-staff",
       "type": "group",
       "name": "HR Staff",
-      "sam_account_name": "HR-Staff"
+      "sam_account_name": "HR-Staff",
+      "security_profile": {
+        "tier": "business",
+        "privilege_scope": "hr_data_access",
+        "high_value_group": true,
+        "members_include": [
+          "user-diana",
+          "user-frank"
+        ],
+        "blast_radius_hint": "Provides broad HR data access to members; bulk HR data is exposed if group is abused."
+      }
     },
     {
       "id": "group-hr-admins",
       "type": "group",
       "name": "HR Admins",
-      "sam_account_name": "HR-Admins"
+      "sam_account_name": "HR-Admins",
+      "security_profile": {
+        "tier": "tier1",
+        "privilege_scope": "admin_hr_apps_and_dc",
+        "high_value_group": true,
+        "members_include": [
+          "user-diana"
+        ],
+        "blast_radius_hint": "HR admin group with elevated privileges on HR app and HR DC; compromise is near-full HR environment control."
+      }
     },
     {
       "id": "group-payroll-staff",
       "type": "group",
       "name": "Payroll Staff",
-      "sam_account_name": "Payroll-Staff"
+      "sam_account_name": "Payroll-Staff",
+      "security_profile": {
+        "tier": "business",
+        "privilege_scope": "payroll_data_access",
+        "high_value_group": true,
+        "members_include": [
+          "user-eric"
+        ],
+        "blast_radius_hint": "Controls access to payroll data; abuse leads to fraud potential and significant regulatory breach."
+      }
     }
   ],
   "edges": [
