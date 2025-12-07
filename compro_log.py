@@ -81,24 +81,9 @@ def analyze_sysmon_logs(sysmon_xml: str, hf_token: str) -> dict:
 
     cleaned = extract_json_block(response.choices[0].message.content.strip())
     raw_output = cleaned
-    print(raw_output)
     # Attempt to parse JSON
     try:
         return json.loads(raw_output)
     except json.JSONDecodeError:
         # If parsing fails, raise error with raw output for debugging
         raise ValueError(f"Model did not return valid JSON. Raw output:\n{raw_output}")
-
-# # ===== USAGE EXAMPLE =====
-# if __name__ == "__main__":
-#     # Example: sysmon_logs comes from another function, file, or API
-#     with open("sysmon_logs.xml", "r", encoding="utf-8") as f:
-#         sysmon_xml = f.read()
-#     try:
-#         result = analyze_sysmon_logs(
-#             sysmon_xml=sysmon_xml,
-#             hf_token=HF_Key  # Ensure HF_Key is defined in your environment or .env file
-#         )
-#         print(json.dumps(result, indent=2))
-#     except Exception as e:
-#         print("Error:", e)

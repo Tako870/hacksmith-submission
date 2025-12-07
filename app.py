@@ -4,8 +4,9 @@ import json
 import os
 import xml.etree.ElementTree as ET
 from datetime import datetime
-from qwenAPI2 import analyze_sysmon_logs
-from qwenAPI3 import analyze_perimeter_logs
+from compro_log import analyze_sysmon_logs
+from peripheral_log import analyze_perimeter_logs
+from remediation_generator import remediation_guide_generate
 
 app = Flask(__name__)
 
@@ -50,6 +51,8 @@ HF_Key = os.getenv('HF_Key')
 # Use the JSON structure I sent earlier as asset_map_with_identities.json
 ASSET_MAP_PATH = Path("assetmaps/assetMap.json")
 LOGS_PATH = "logs/logs.xml"
+perimeter_path = Path('logs/perimeterLogs.json')
+compro_path = Path("logs/filteredLogs.json")
 
 def load_asset_map():
     """
@@ -369,7 +372,7 @@ def render_map_vuln():
 
     host_nodes = [n for n in nodes if n.get("type") == "host"]
     user_nodes = [n for n in nodes if n.get("type") == "user"]
-    group_nodes = [n for n in nodes if n.get("type") == "group"]
+    group_nodes = [n for n in nodes if n.get("type") == "group"] 
 
     return render_template(
         'renderMapVuln.html',
@@ -397,7 +400,7 @@ def api_perimeter():
     Serve the perimeterLogs.json file so the frontend can highlight peripheral devices.
     Returns an empty object if the file is not present.
     """
-    perimeter_path = Path('logs/perimeterLogs.json')
+
     if not perimeter_path.exists():
         return jsonify({})
     try:
@@ -411,11 +414,8 @@ def api_perimeter():
 def api_log_generate():
     # API to get JSON of the filtered logs from AI
     
-    logs = analyze_sysmon_logs(LOGS_PATH, HF_Key)
-    
-    # Save the filtered logs to a JSON file
-    filtered_logs_path = Path("logs/filteredLogs.json")
-    with open(filtered_logs_path, 'w', encoding='utf-8') as f:
+    logs = analyze_sysmon_logs(LOGS_PATH, HF_Key)    
+    with open(compro_path, 'w', encoding='utf-8') as f:
         json.dump(logs, f, indent=2, ensure_ascii=False)
     
     return jsonify(logs)
@@ -429,6 +429,15 @@ def api_peripheral_generate():
         json.dump(peripheral_logs, f, indent=2, ensure_ascii=False)
         
     return jsonify(peripheral_logs)
+
+@app.route('/api/remediation')
+def api_remediation_generate():
+    remediation = remediation_guide_generate(ASSET_MAP_PATH, str(perimeter_path), str(compro_path), str(LOGS_PATH))
+    result = {
+        "remediation":remediation
+    }
+    
+    return jsonify(result)
 
 if __name__ == '__main__':
     # For hackathon demo purposes; behind a reverse proxy in "real life"
