@@ -4,9 +4,9 @@ import json
 import os
 import xml.etree.ElementTree as ET
 from datetime import datetime
-from compro_log import analyze_sysmon_logs
-from peripheral_log import analyze_perimeter_logs
-from remediation_generator import remediation_guide_generate
+from ML_assistants.compro_log import analyze_sysmon_logs
+from ML_assistants.peripheral_log import analyze_perimeter_logs
+from ML_assistants.remediation_generator import remediation_guide_generate
 
 app = Flask(__name__)
 
@@ -432,7 +432,7 @@ def api_peripheral_generate():
 
 @app.route('/api/remediation')
 def api_remediation_generate():
-    remediation = remediation_guide_generate(ASSET_MAP_PATH, str(perimeter_path), str(compro_path), str(LOGS_PATH))
+    remediation = remediation_guide_generate(ASSET_MAP_PATH, str(perimeter_path), str(compro_path))
     result = {
         "remediation":remediation
     }

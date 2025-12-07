@@ -44,11 +44,6 @@ INPUT 3: COMPROMISE SUMMARY (JSON)
 -----------------------------------------------
 {compromise_summary_json}
 
------------------------------------------------
-INPUT 4: ORIGINAL LOGS (XML)
------------------------------------------------
-{sysmon_logs}
-
 --------------------------------
 END INCIDENT SUMMARY
 --------------------------------
@@ -119,28 +114,40 @@ Use Bootstrap classes:
 - Alerts: `<div class="alert alert-danger/warning/info">` for critical information
 - Code formatting: `<code>` for IPs and hostnames
 - Emphasis: `<strong>` for critical items
+- DO NOT USE the <think> tag. DO NOT SHOW THINKING.
 
 --------------------------------
-STYLE & CONSTRAINTS
+RULES (DO NOT OUTPUT THESE)
 --------------------------------
 
 - Ground all references in provided JSON - do NOT invent hosts or IPs
+- Only reference hosts, IPs, users, groups, and relationships that appear in the input data
 - Format assets as: "IP (Name – ID, criticality)" e.g., "172.16.34.6 (Customer DB Server – db-1, critical)"
 - Use `<code>` tags for IPs, hostnames, technical identifiers
-- Keep tone professional, clear, operational
-- Output ONLY the HTML content starting with `<div class="container mt-4">` - NO DOCTYPE, html, head, or body tags
-- Make steps actionable and specific to the provided data
+- Use `<strong>` tags for critical items requiring immediate attention
+- Prioritize actions by risk_level: critical > high > medium > low
+- Map containment actions to specific likely_vectors and affected_ports from the data
+- Reference asset map relationships (admin_on, local_admin_on, db_backend, etc.) when describing blast radius
+- For Phase 1, create separate card sections for "primary_compromised" (bg-danger) and high-risk "affected_hosts" (bg-warning)
+- Keep tone professional, clear, operational - suitable for SOC analysts during active incident
+- Be specific and actionable - every step should reference actual hosts/IPs from the data
+
+--------------------------------
+OUTPUT CONSTRAINTS
+--------------------------------
+
+- Output ONLY HTML content starting with `<div class="container mt-4">` - NO DOCTYPE, html, head, or body tags
+- Your first character MUST be "<" and the output must be valid, embeddable HTML
+- Do NOT include markdown code blocks, explanatory text, or comments outside the HTML
+- The HTML will be embedded in an existing Bootstrap-styled page
 
 Now, read the asset map and incident summary above carefully, reason about the environment and blast radius, and output the full remediation playbook in HTML format following the required structure.
 '''
 
-def remediation_guide_generate(assetpath, peripheralpath, compropath, logpath) :
+def remediation_guide_generate(assetpath, peripheralpath, compropath) :
     with open(assetpath, "r", encoding="utf-8") as f:
         asset_map = json.load(f)
         
-    with open(logpath, "r", encoding="utf-8") as f:
-        sysmon_logs = f.read()
-    
     with open(compropath, "r", encoding="utf-8") as f:
         compro_summary = json.load(f)
         
@@ -150,12 +157,12 @@ def remediation_guide_generate(assetpath, peripheralpath, compropath, logpath) :
     # Format prompt
     asset_json_str = json.dumps(asset_map, separators=(',', ':'))
     full_prompt = PROMPT.format(
-        sysmon_logs=sysmon_logs.strip(),
         asset_map_json=asset_json_str,
         compromise_summary_json=compro_summary,
         peripheral_summary_json=peripheral_summary
     )
 
+    print(full_prompt)
     # Call model
     client = InferenceClient(model="Qwen/Qwen3-32B", token=HF_Key)
     response = client.chat_completion(
