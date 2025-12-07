@@ -426,4 +426,33 @@
             }
 
             applyPerimeterDecorations();
+
+            // Fetch and display remediation playbook
+            async function loadRemediationPlaybook() {
+                try {
+                    const resp = await fetch('/api/remediation');
+                    if (!resp.ok) {
+                        console.warn('Failed to fetch remediation playbook');
+                        return;
+                    }
+                    const html = await resp.text();
+                    
+                    // Create a container for the remediation content
+                    const remediationContainer = document.createElement('div');
+                    remediationContainer.id = 'remediation-playbook';
+                    remediationContainer.style.marginTop = '2rem';
+                    remediationContainer.innerHTML = html;
+                    
+                    // Append after the map container
+                    const mapContainer = document.getElementById('map-container');
+                    if (mapContainer && mapContainer.parentNode) {
+                        mapContainer.parentNode.insertBefore(remediationContainer, mapContainer.nextSibling);
+                    }
+                } catch (e) {
+                    console.warn('Error loading remediation playbook:', e);
+                }
+            }
+
+            // Load remediation playbook after a short delay to allow other content to render
+            setTimeout(loadRemediationPlaybook, 500);
         });
