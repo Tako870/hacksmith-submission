@@ -435,7 +435,17 @@
                         console.warn('Failed to fetch remediation playbook');
                         return;
                     }
-                    const html = await resp.text();
+                    const data = await resp.json();
+                    let html = data.remediation || '';
+                    
+                    if (!html) {
+                        console.warn('No remediation content available');
+                        return;
+                    }
+                    
+                    // Strip all \n except when it's part of an HTML closing tag (</...>)
+                    // Replace \n with empty string, but preserve closing tags
+                    html = html.replace(/\\n(?!>)/g, '');
                     
                     // Create a container for the remediation content
                     const remediationContainer = document.createElement('div');

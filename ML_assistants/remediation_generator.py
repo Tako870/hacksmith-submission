@@ -97,24 +97,59 @@ Your playbook must be:
 REQUIRED OUTPUT STRUCTURE (HTML)
 --------------------------------
 
-Output **clean HTML** with Bootstrap classes. Use this structure:
+Output **clean HTML** structured as a Bootstrap info box with navigation tabs. Each of the 8 phases should be a separate tab.
 
-1. **Executive Summary** - Brief incident description, key compromised hosts, at-risk hosts, business impact
-2. **Incident & Blast Radius Overview** - Attack path analysis, critical relationships, sensitive chains
-3. **Phase 1: Immediate Containment (0-30 min)** - Network isolation, account disabling, vector blocking for compromised and high-risk hosts
-4. **Phase 2: Investigation & Scoping** - Evidence validation, log review, identity abuse checks
-5. **Phase 3: Eradication** - Persistence removal, credential rotation, system cleaning/reimaging
-6. **Phase 4: Recovery** - Clean criteria, restoration order, network re-enablement, data integrity checks
-7. **Phase 5: Validation & Monitoring** - Detection rules, telemetry improvements, watch items
-8. **Phase 6: Long-Term Hardening** - Network hardening, privilege reduction, application security, policy updates
+The HTML structure MUST be:
 
-Use Bootstrap classes:
-- Sections: `<section class="mb-5">` with `<h2 class="text-primary border-bottom pb-2">` headers
-- Cards: `<div class="card">` with `<div class="card-header bg-danger/warning/info">` for priority levels
+<div class="card" style="margin-top: 2rem;">
+  <div class="card-header bg-dark text-white">
+    <h3 class="mb-0">Incident Response Remediation Playbook</h3>
+  </div>
+  <div class="card-body">
+    <ul class="nav nav-tabs" id="remediationTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary" type="button" role="tab">Summary</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="blast-tab" data-bs-toggle="tab" data-bs-target="#blast" type="button" role="tab">Blast Radius</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="phase1-tab" data-bs-toggle="tab" data-bs-target="#phase1" type="button" role="tab">Phase 1</button>
+      </li>
+      <!-- Continue for all 8 phases -->
+    </ul>
+    
+    <div class="tab-content" id="remediationTabContent" style="padding: 1.5rem 0;">
+      <div class="tab-pane fade show active" id="summary" role="tabpanel">
+        <!-- Executive Summary content here -->
+      </div>
+      <div class="tab-pane fade" id="blast" role="tabpanel">
+        <!-- Blast Radius content here -->
+      </div>
+      <div class="tab-pane fade" id="phase1" role="tabpanel">
+        <!-- Phase 1 content here -->
+      </div>
+      <!-- Continue for remaining phases -->
+    </div>
+  </div>
+</div>
+
+Tab structure:
+1. **Summary** (active by default) - Executive summary with compromised hosts, at-risk hosts, business impact
+2. **Blast Radius** - Attack path analysis, critical relationships, sensitive chains
+3. **Phase 1** - Immediate Containment (0-30 min): Network isolation, account disabling, vector blocking
+4. **Phase 2** - Investigation & Scoping: Evidence validation, log review, identity abuse checks
+5. **Phase 3** - Eradication: Persistence removal, credential rotation, system cleaning/reimaging
+6. **Phase 4** - Recovery: Clean criteria, restoration order, network re-enablement, data integrity checks
+7. **Phase 5** - Validation & Monitoring: Detection rules, telemetry improvements, watch items
+8. **Phase 6** - Long-Term Hardening: Network hardening, privilege reduction, application security, policy updates
+
+Within each tab content, use Bootstrap classes:
+- Cards: `<div class="card mb-3">` with `<div class="card-header bg-danger/warning/info text-white">` for priority levels
 - Alerts: `<div class="alert alert-danger/warning/info">` for critical information
+- Lists: `<ul class="list-group">` or standard `<ul>` for action items
 - Code formatting: `<code>` for IPs and hostnames
 - Emphasis: `<strong>` for critical items
-- DO NOT USE the <think> tag. DO NOT SHOW THINKING.
 
 --------------------------------
 RULES (DO NOT OUTPUT THESE)
@@ -131,17 +166,19 @@ RULES (DO NOT OUTPUT THESE)
 - For Phase 1, create separate card sections for "primary_compromised" (bg-danger) and high-risk "affected_hosts" (bg-warning)
 - Keep tone professional, clear, operational - suitable for SOC analysts during active incident
 - Be specific and actionable - every step should reference actual hosts/IPs from the data
+- DO NOT USE the <think> tag. DO NOT SHOW THINKING.
 
 --------------------------------
 OUTPUT CONSTRAINTS
 --------------------------------
 
-- Output ONLY HTML content starting with `<div class="container mt-4">` - NO DOCTYPE, html, head, or body tags
+- Output ONLY HTML content starting with `<div class="card"` - NO DOCTYPE, html, head, or body tags
 - Your first character MUST be "<" and the output must be valid, embeddable HTML
 - Do NOT include markdown code blocks, explanatory text, or comments outside the HTML
-- The HTML will be embedded in an existing Bootstrap-styled page
+- Ensure all Bootstrap tab data attributes are correctly set (data-bs-toggle, data-bs-target, role, aria attributes)
+- The HTML will be embedded in an existing Bootstrap-styled page with Bootstrap 5 already loaded
 
-Now, read the asset map and incident summary above carefully, reason about the environment and blast radius, and output the full remediation playbook in HTML format following the required structure.
+Now, read the asset map and incident summary above carefully, reason about the environment and blast radius, and output the full remediation playbook as a Bootstrap tabbed card following the required structure.
 '''
 
 def remediation_guide_generate(assetpath, peripheralpath, compropath) :
