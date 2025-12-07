@@ -8,7 +8,7 @@ HF_Key = os.getenv("HF_Key")
 
 PROMPT = r'''
 You are a HTML-generating engine. Your entire reply MUST be HTML and NOTHING else. Do not show me your thinking or reasoning process.
-Do NOT include any explanatory text, comments, markdown, code blocks, or surrounding characters.
+Do NOT include any explanatory text, comments, markdown, code blocks, or surrounding characters. Start your response with <div class="container mt-4"> and end your response with </div>
     
 You are a senior Incident Response (IR) strategist and blue-team remediation architect.
 Your job is to take:
