@@ -1,71 +1,18 @@
 {
-  "incident_id": "INC-20250115-001",
-  "summary": "Suspicious activity detected on finance workstation fin-ws-2, including persistence mechanisms and direct SQL access. Lateral movement indicators suggest potential compromise.",
+  "incident_id": "INC-20190805-092456",
+  "summary": "Unusual administrative privilege modifications detected on host MSEDGEWIN10, potentially indicating unauthorized access or privilege escalation.",
   "severity": "high",
-  "detected_at": "2025-01-15T14:20:45.5000000Z",
+  "detected_at": "2019-08-05T09:24:56.7402180Z",
   "affected_hosts": [
     {
-      "ip": "172.16.35.101",
-      "status": "at_risk",
-      "risk_level": "medium",
-      "reason": "Network connection to HR file server",
-      "affected_ports": [
-        50231
-      ],
-      "tags": [
-        "HR"
-      ]
-    },
-    {
-      "ip": "172.16.35.103",
+      "ip": "127.0.0.1",
       "status": "compromised",
       "risk_level": "critical",
-      "reason": "Persistence mechanisms and suspicious SQL access detected",
-      "affected_ports": [
-        50321,
-        50337
-      ],
+      "reason": "Administrative privileges were modified by a user (IEUser) via an unknown process (net1.exe), suggesting potential privilege escalation or unauthorized access.",
+      "affected_ports": [],
       "tags": [
-        "Finance",
-        "Persistence",
-        "SQL"
-      ]
-    },
-    {
-      "ip": "172.16.35.20",
-      "status": "at_risk",
-      "risk_level": "low",
-      "reason": "Network connection from HR workstation",
-      "affected_ports": [
-        445
-      ],
-      "tags": [
-        "HR"
-      ]
-    },
-    {
-      "ip": "172.16.35.21",
-      "status": "at_risk",
-      "risk_level": "medium",
-      "reason": "Network connection from finance workstation",
-      "affected_ports": [
-        445
-      ],
-      "tags": [
-        "Finance"
-      ]
-    },
-    {
-      "ip": "172.16.35.41",
-      "status": "at_risk",
-      "risk_level": "high",
-      "reason": "Direct SQL access from finance workstation",
-      "affected_ports": [
-        1433
-      ],
-      "tags": [
-        "Finance",
-        "SQL"
+        "privilege_modification",
+        "unusual_admin_activity"
       ]
     }
   ]

@@ -1,102 +1,87 @@
 {
-  "incident_id": "INC-20250115-001",
-  "summary": "Compromised finance and HR workstations with lateral movement paths to critical assets",
+  "incident_id": "INC-2019-08-05-092456",
+  "summary": "Privilege escalation detected on engineer workstation with potential lateral movement to critical servers",
   "severity": "critical",
-  "detected_at": "2025-01-15T14:20:45.5000000Z",
+  "detected_at": "2019-08-05T09:24:56.7402180Z",
   "primary_compromised": [
-    "172.16.35.101",
-    "172.16.35.103"
+    "172.16.34.21"
   ],
   "affected_hosts": [
     {
-      "ip": "172.16.35.41",
+      "ip": "172.16.34.5",
+      "status": "at_risk",
+      "risk_level": "high",
+      "risk_of_subsequent_compromise": "critical",
+      "reason": "IT Server Admin group membership of compromised user provides local admin access to web-1 via RDP/SMB using stolen credentials",
+      "likely_vectors": [
+        "rdp_with_stolen_admin_creds",
+        "smb_lateral_movement"
+      ],
+      "affected_ports": [
+        3389,
+        445
+      ],
+      "tags": [
+        "web-server",
+        "dmz-exposed"
+      ]
+    },
+    {
+      "ip": "172.16.34.7",
       "status": "at_risk",
       "risk_level": "critical",
       "risk_of_subsequent_compromise": "critical",
-      "reason": "Direct SQL access from compromised fin-ws-2 (ERIC) with potential for data exfiltration or payroll manipulation",
+      "reason": "Application server admin access via IT Server Admins group membership of compromised user, with direct DB backend connection path",
       "likely_vectors": [
-        "SQL injection via PowerShell",
-        "stolen service account credentials"
+        "rdp_with_stolen_admin_creds",
+        "sql_injection_from_app_layer"
       ],
       "affected_ports": [
+        8080,
+        3389,
         1433
       ],
       "tags": [
-        "payroll_db",
-        "high_value"
+        "app-server",
+        "db-frontend"
       ]
     },
     {
-      "ip": "172.16.35.21",
-      "status": "at_risk",
-      "risk_level": "high",
-      "risk_of_subsequent_compromise": "medium_high",
-      "reason": "Finance file server accessible via SMB from compromised fin-ws-2 (ERIC) with cached credentials",
-      "likely_vectors": [
-        "SMB lateral movement",
-        "stolen payroll app credentials"
-      ],
-      "affected_ports": [
-        445
-      ],
-      "tags": [
-        "payroll_files",
-        "sensitive"
-      ]
-    },
-    {
-      "ip": "172.16.35.10",
+      "ip": "172.16.34.6",
       "status": "at_risk",
       "risk_level": "critical",
+      "risk_of_subsequent_compromise": "critical",
+      "reason": "Database server accessible via compromised app-1 host through db_backend relationship, with direct RDP access possible using stolen admin credentials",
+      "likely_vectors": [
+        "sql_exploitation",
+        "rdp_with_stolen_admin_creds"
+      ],
+      "affected_ports": [
+        1433,
+        3389
+      ],
+      "tags": [
+        "customer-db",
+        "highly-sensitive"
+      ]
+    },
+    {
+      "ip": "172.16.34.8",
+      "status": "at_risk",
+      "risk_level": "medium",
       "risk_of_subsequent_compromise": "high",
-      "reason": "HR/Finance domain controller accessible via admin group membership of DIANA (hr-ws-1) with potential for golden ticket attacks",
+      "reason": "File server accessible via SMB from compromised workstation, with potential for credential reuse from admin group membership",
       "likely_vectors": [
-        "Kerberos ticket forgery",
-        "DCSync via stolen credentials"
+        "smb_lateral_movement",
+        "credential_reuse"
       ],
       "affected_ports": [
-        389,
-        445
+        445,
+        3389
       ],
       "tags": [
-        "domain_controller",
-        "tier0"
-      ]
-    },
-    {
-      "ip": "172.16.35.20",
-      "status": "at_risk",
-      "risk_level": "high",
-      "risk_of_subsequent_compromise": "medium",
-      "reason": "HR file server accessible via SMB from compromised hr-ws-1 (DIANA) with personnel data exposure risk",
-      "likely_vectors": [
-        "SMB share access",
-        "stolen HR app credentials"
-      ],
-      "affected_ports": [
-        445
-      ],
-      "tags": [
-        "hr_files",
-        "sensitive"
-      ]
-    },
-    {
-      "ip": "172.16.35.40",
-      "status": "at_risk",
-      "risk_level": "high",
-      "risk_of_subsequent_compromise": "medium_high",
-      "reason": "HR database server accessible via HR admin group privileges from compromised hr-ws-1 (DIANA)",
-      "likely_vectors": [
-        "SQL injection",
-        "stolen service account credentials"
-      ],
-      "affected_ports": [
-        1433
-      ],
-      "tags": [
-        "hr_db",
-        "sensitive"
+        "file-server",
+        "shared-documents"
       ]
     }
   ]

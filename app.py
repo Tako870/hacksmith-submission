@@ -240,6 +240,8 @@ def resolve_assets(event, asset_map):
 
     return event
 
+# -------------------------------- WEB ROUTES -------------------------------- #
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -328,7 +330,6 @@ def render_map():
         group_nodes=group_nodes
     )
 
-
 @app.route('/rendermap_vuln')
 def render_map_vuln():
     """
@@ -402,4 +403,4 @@ def api_remediation_generate():
 
 if __name__ == '__main__':
     # For hackathon demo purposes; behind a reverse proxy in "real life"
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000)
